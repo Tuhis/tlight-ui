@@ -7,22 +7,18 @@ import _ from "lodash";
 
 class NodeCardGrid extends React.Component {
 
-    renderNodeCards() {
-        return _.map(this.props.nodeIds, id => {
-            return (
-                <NodeCard
-                    key={id}
-                    id={id} />
-            );
-        });
-    }
-
     render() {
         console.log(this.props);
 
         return (
             <div className={styles["card-container"]}>
-                {this.renderNodeCards()}
+                {_.map(this.props.nodeIds, id => {
+                    return (
+                        <NodeCard
+                            key={id}
+                            id={id} />
+                    );
+                })}
             </div>
         );
     }
@@ -37,7 +33,7 @@ NodeCardGrid.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    nodeIds: ((nodes) => _.keys(nodes)) (state.nodes)
+    nodeIds: ((nodes) => _.keys(nodes))(state.nodes)
 });
 
 export default connect(

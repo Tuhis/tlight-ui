@@ -18,10 +18,10 @@ import { loadNodeData } from "./actions/nodeActions";
 import { createTlightApiMiddleware } from "./middleware/tlightApiMiddleware";
 
 const tlightApiMiddleware = createTlightApiMiddleware({
-    baseUrl: "http://localhost:3001/v1"
+    baseUrl: `${document.location.protocol}//${document.location.hostname}:3001/v1`
 });
 
-const history = createBrowserHistory()
+const history = createBrowserHistory();
 
 const store = createStore(
     createRootReducer(history),
