@@ -1,0 +1,33 @@
+.basecard {
+    display: block;
+    box-sizing: border-box;
+    width: 420px;
+    background-color: #2a6b7e;
+    padding: 12px;
+
+    color: white;
+    font-size: 16pt;
+    /* line-height: 20pt; */
+    font-weight: 400;
+}
+
+.fixed-height {
+    height: 600px;
+}
+
+.auto-height {
+    height: auto;
+}
+
+h2 {
+    color: white;
+    font-size: 24pt;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    font-weight: 300;
+}
+
+.divider {
+    background-color: white;
+    margin-top: 0 !important;
+}
