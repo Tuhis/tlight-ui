@@ -11,6 +11,9 @@ import Breadcrumbs from './components/presentational/Breadcrumbs/Breadcrumbs';
 import NodeCardGrid from './components/container/NodeCardGrid/NodeCardGrid';
 import LightCardGrid from "./components/container/LightCardGrid/LightCardGrid";
 import EffectCardGrid from "./components/container/EffectCardGrid/EffectCardGrid";
+import { NARROW_DISPLAY_WIDTH } from "./constants/generic";
+import { FullscreenMenu } from "./components/presentational/FullscreenMenu/FullscreenMenu";
+import { Centerizer } from "./components/presentational/Centerizer/Centerizer";
 
 class App extends Component {
 
@@ -40,15 +43,26 @@ class App extends Component {
             }
         ];
 
+        const narrowViewport = !window.matchMedia(`(min-width: ${NARROW_DISPLAY_WIDTH}px)`).matches;
+
         return (
             <div className="App">
 
-                <Sidebar>
-                    <BigLinkList links={sidebarLinks} />
-                </Sidebar>
+                {!narrowViewport &&
+                    <Sidebar>
+                        <BigLinkList links={sidebarLinks} />
+                    </Sidebar>
+                }
 
                 <div className={"content"}>
                     <Topbar>
+                        {narrowViewport &&
+                            <Centerizer vertical>
+                            <FullscreenMenu>
+                                <BigLinkList links={sidebarLinks}/>
+                            </FullscreenMenu>
+                            </Centerizer>
+                        }
                         <Breadcrumbs path={this.props.breadcrumbPath} />
                     </Topbar>
 
@@ -67,10 +81,10 @@ class App extends Component {
 
 const mapStateToProps = state => ({
     breadcrumbPath: _.chain(state.router.location.pathname)
-                     .split("/")
-                     .compact()
-                     .map(e => _.startCase(_.toLower(e)))
-                     .value()
+        .split("/")
+        .compact()
+        .map(e => _.startCase(_.toLower(e)))
+        .value()
 });
 
 const mapDispatchToProps = dispatch => ({

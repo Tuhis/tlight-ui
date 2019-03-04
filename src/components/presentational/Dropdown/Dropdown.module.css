@@ -5,7 +5,8 @@
     border: solid;
     border-width: 1px;
     border-color: white;
-    width: 198px;
+    width: 100%;
+    min-width: 100px;
     background-color: #009de0;
 
     color: white;
@@ -46,7 +47,7 @@
     position: absolute;
     top: -1px;
     left: -1px;
-    box-sizing: border-box;
+    box-sizing: content-box;
     border: solid 1px white;
     background-color: inherit;
     width: inherit;

@@ -8,6 +8,13 @@
 }
 
 .card-container > div {
-    margin-left: 12px;
+    /* margin-left: 12px; */
     margin-top: 12px;
+}
+
+/* If screen is big enough (to show the sidebar), add margin on left of cards */
+@media screen and (min-width: 470px) {
+    .card-container > div {
+        margin-left: 12px;
+    }
 }

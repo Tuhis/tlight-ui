@@ -40,7 +40,7 @@ class BigLinkList extends React.Component {
                     key={link.text}
                     onClick={link.onClick} >
 
-                    <div className={styles["link-text"]}>
+                    <div className={`${styles["link-text"]} ${this.props.rotateTextsOnNarrowList ? styles["rotate"] : ""}`}>
                         {linkText}
                     </div>
 
@@ -68,11 +68,13 @@ class BigLinkList extends React.Component {
 };
 
 BigLinkList.propTypes = {
-    cutTextsOnNarrowList: PropTypes.bool.isRequired
+    cutTextsOnNarrowList: PropTypes.bool.isRequired,
+    rotateTextsOnNarrowList: PropTypes.bool.isRequired
 };
 
 BigLinkList.defaultProps = {
-    cutTextsOnNarrowList: false
+    cutTextsOnNarrowList: false,
+    rotateTextsOnNarrowList: false
 };
 
 export default BigLinkList;
