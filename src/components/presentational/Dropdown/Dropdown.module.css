@@ -51,6 +51,7 @@
     border: solid 1px white;
     background-color: inherit;
     width: inherit;
+    z-index: 1000;
 }
 
 ul {
