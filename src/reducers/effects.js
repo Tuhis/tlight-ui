@@ -1,4 +1,5 @@
 import _ from "lodash";
+import uuid from "uuid/v4";
 import { NODES_RECEIVED } from "../actions/nodeActions";
 import { CREATE_NEW_EFFECT, SET_EFFECT_NAME, SET_EFFECT_TYPE, SET_EFFECT_PROPERTY, SELECT_EFFECT } from "../actions/effectActions";
 
@@ -112,7 +113,7 @@ const effects = (state = initialState, action) => {
 
 function createNewEffect() {
     return {
-        id: _.uniqueId(),
+        id: uuid(),
         name: "Effect Name",
         type: null,
         effectProperties: {}

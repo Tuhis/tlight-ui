@@ -40,6 +40,13 @@ class App extends Component {
             {
                 text: "Groups",
                 onClick: () => this.navigateTo("/groups")
+            },
+            {
+                text: "Reset",
+                onClick: () => {
+                    localStorage.clear();
+                    document.location.reload();
+                }
             }
         ];
 

@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -17,6 +18,8 @@ import * as serviceWorker from './serviceWorker';
 import { loadNodeData } from "./actions/nodeActions";
 import { createTlightApiMiddleware } from "./middleware/tlightApiMiddleware";
 
+const persistedState = localStorage.getItem("reduxState") ? JSON.parse(localStorage.getItem("reduxState")) : undefined;
+
 const tlightApiMiddleware = createTlightApiMiddleware({
     baseUrl: `${document.location.protocol}//${document.location.hostname}:3001/v1`
 });
@@ -25,6 +28,7 @@ const history = createBrowserHistory();
 
 const store = createStore(
     createRootReducer(history),
+    persistedState,
     applyMiddleware(
         routerMiddleware(history),
         thunk,
@@ -32,6 +36,15 @@ const store = createStore(
         tlightApiMiddleware,
     )
 );
+
+// Effects are persisted in browser's localStorage. Debounce to prevent performance issues.
+store.subscribe(_.debounce(() => {
+    const stateToPersist = {
+        effects: store.getState().effects
+    };
+
+    localStorage.setItem('reduxState', JSON.stringify(stateToPersist));
+}, 500, { trailing: true }));
 
 store.dispatch(loadNodeData());
 
