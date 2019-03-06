@@ -11,9 +11,10 @@ import KeyValueList from "../../presentational/KeyValueList/KeyValueList";
 import Row50 from "../../presentational/Row50/Row50";
 import SliderAndInput from "../../presentational/SliderAndInput/SliderAndInput";
 
-import { setEffectName, setEffectType, setEffectProperty } from "../../../actions/effectActions";
+import { setEffectName, setEffectType, setEffectProperty, deleteEffect } from "../../../actions/effectActions";
 import { AVAILABLE_EFFECTS, EFFECT_PROPERTIES, COMMON_PROPERTIES } from "../../../constants/availableEffects";
 import { MIN_VALUE, MAX_VALUE } from "../../../constants/generic";
+import NormalButton from "../../presentational/NormalButton/NormalButton";
 
 class EffectCard extends React.Component {
 
@@ -25,6 +26,10 @@ class EffectCard extends React.Component {
 
     handleEffectTypeChange = (item, typeIndex) => {
         this.props.onEffectTypeChange(this.props.id, item.data);
+    }
+
+    handleEffectDelete = () => {
+        this.props.onEffectDelete(this.props.id);
     }
 
     renderEffectProperties(effectProperties, rootPath = "") {
@@ -94,6 +99,15 @@ class EffectCard extends React.Component {
 
                 {this.renderEffectProperties(this.props.effectPropertyScheme, "effect")}
 
+                <Divider />
+
+                <NormalButton
+                    onClick={this.handleEffectDelete}
+                    css={{cancelButton: true}} >
+
+                    Delete
+                </NormalButton>
+
             </BaseCard>
         );
     }
@@ -107,7 +121,8 @@ EffectCard.propTypes = {
     effectProperties: PropTypes.object.isRequired,
     onEffectNameChange: PropTypes.func.isRequired,
     onEffectTypeChange: PropTypes.func.isRequired,
-    onEffectPropertyChange: PropTypes.func.isRequired
+    onEffectPropertyChange: PropTypes.func.isRequired,
+    onEffectDelete: PropTypes.func.isRequired
 };
 
 EffectCard.defaultProps = {
@@ -163,7 +178,8 @@ const mapDispatchToProps = dispatch => ({
 
         dispatch(setEffectProperty(id, "effect", effectProperties.effect));
     },
-    onEffectPropertyChange: (id, path, value) => dispatch(setEffectProperty(id, path, value))
+    onEffectPropertyChange: (id, path, value) => dispatch(setEffectProperty(id, path, value)),
+    onEffectDelete: (id) => dispatch(deleteEffect(id))
 });
 
 export default connect(

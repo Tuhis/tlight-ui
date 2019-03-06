@@ -11,7 +11,8 @@ const BaseCard = props => {
         <div className={
             styles.basecard +
             " base-card " +
-            (props.autoHeight ? styles["auto-height"] : styles["fixed-height"])}>
+            (props.autoHeight ? styles["auto-height"] : styles["fixed-height"])}
+            style={{minHeight: props.minHeight}} >
 
             {props.showTitle &&
                 <React.Fragment>
@@ -36,6 +37,7 @@ const BaseCard = props => {
 BaseCard.propTypes = {
     title: PropTypes.string.isRequired,
     autoHeight: PropTypes.bool.isRequired,
+    minHeight: PropTypes.number.isRequired,
     showTitle: PropTypes.bool.isRequired,
     editableTitle: PropTypes.bool.isRequired,
     onTitleChange: PropTypes.func.isRequired
@@ -44,6 +46,7 @@ BaseCard.propTypes = {
 BaseCard.defaultProps = {
     title: "Card Title",
     autoHeight: false,
+    minHeight: 0,
     showTitle: true,
     editableTitle: false,
     onTitleChange: _.noop

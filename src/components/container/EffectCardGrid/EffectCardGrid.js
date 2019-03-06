@@ -27,7 +27,8 @@ class EffectCardGrid extends React.Component {
                     )
                 }
                 <AddNewCard
-                    onClick={this.onAddNewEffectClick} />
+                    onClick={this.onAddNewEffectClick}
+                    autoHeight />
             </div>
         );
     }

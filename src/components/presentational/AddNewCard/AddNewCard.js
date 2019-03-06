@@ -7,7 +7,9 @@ import BaseCard from "../BaseCard/BaseCard";
 const AddNewCard = props => {
     return (
         <BaseCard
-            showTitle={false} >
+            showTitle={false}
+            minHeight={props.minHeight}
+            autoHeight={props.autoHeight} >
 
             <div
                 onClick={props.onClick}
@@ -26,7 +28,9 @@ const AddNewCard = props => {
 
 AddNewCard.propTypes = {
     title: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
+    minHeight: PropTypes.number,
+    autoHeight: PropTypes.bool
 };
 
 AddNewCard.defaultProps = {

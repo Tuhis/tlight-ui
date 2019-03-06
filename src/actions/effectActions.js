@@ -5,6 +5,7 @@ export const SET_EFFECT_NAME = "SET_EFFECT_NAME";
 export const SET_EFFECT_TYPE = "SET_EFFECT_TYPE";
 export const SET_EFFECT_PROPERTY = "SET_EFFECT_PROPERTY";
 export const SELECT_EFFECT = "SELECT_EFFECT";
+export const DELETE_EFFECT = "DELETE_EFFECT";
 
 export const createNewEffect = () => ({
     type: CREATE_NEW_EFFECT
@@ -40,6 +41,13 @@ export const setEffectProperty = (id, path, value) => ({
         effectId: id,
         path: path,
         value: value
+    }
+});
+
+export const deleteEffect = (id) => ({
+    type: DELETE_EFFECT,
+    payload: {
+        effectId: id
     }
 });
 

@@ -1,7 +1,7 @@
 import _ from "lodash";
 import uuid from "uuid/v4";
 import { NODES_RECEIVED } from "../actions/nodeActions";
-import { CREATE_NEW_EFFECT, SET_EFFECT_NAME, SET_EFFECT_TYPE, SET_EFFECT_PROPERTY, SELECT_EFFECT } from "../actions/effectActions";
+import { CREATE_NEW_EFFECT, SET_EFFECT_NAME, SET_EFFECT_TYPE, SET_EFFECT_PROPERTY, SELECT_EFFECT, DELETE_EFFECT } from "../actions/effectActions";
 
 const initialState = {
     configuredEffects: [],
@@ -45,6 +45,13 @@ const effects = (state = initialState, action) => {
                         effectId: action.payload.effectId
                     }
                 }
+            };
+        }
+
+        case DELETE_EFFECT: {
+            return {
+                ...state,
+                configuredEffects: _.filter(state.configuredEffects, item => item.id !== action.payload.effectId)
             };
         }
 
