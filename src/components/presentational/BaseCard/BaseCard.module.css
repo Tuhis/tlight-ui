@@ -19,12 +19,21 @@
     height: auto;
 }
 
-h2 {
+h2, .title-input{
     color: white;
     font-size: 24pt;
     margin-top: 6px;
     margin-bottom: 6px;
     font-weight: 300;
+}
+
+.title-input {
+    display: block;
+    background-color: transparent;
+    font-family: inherit;
+    border: none;
+    padding: 0;
+    width: 100%;
 }
 
 .divider {

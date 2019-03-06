@@ -1,4 +1,5 @@
 import React from "react";
+import _ from "lodash";
 import PropTypes from "prop-types";
 import styles from "./BaseCard.module.css";
 import Divider from "../Divider/Divider";
@@ -14,7 +15,15 @@ const BaseCard = props => {
 
             {props.showTitle &&
                 <React.Fragment>
-                    <h2>{props.title}</h2>
+                    {props.editableTitle ?
+                        <input
+                            className={styles["title-input"]}
+                            type="text"
+                            value={props.title}
+                            onChange={(e) => props.onTitleChange(e.target.value)} />
+                        :
+                        <h2>{props.title}</h2>
+                    }
                     <Divider className={styles.divider} />
                 </React.Fragment>
             }
@@ -27,13 +36,17 @@ const BaseCard = props => {
 BaseCard.propTypes = {
     title: PropTypes.string.isRequired,
     autoHeight: PropTypes.bool.isRequired,
-    showTitle: PropTypes.bool.isRequired
+    showTitle: PropTypes.bool.isRequired,
+    editableTitle: PropTypes.bool.isRequired,
+    onTitleChange: PropTypes.func.isRequired
 };
 
 BaseCard.defaultProps = {
     title: "Card Title",
     autoHeight: false,
-    showTitle: true
+    showTitle: true,
+    editableTitle: false,
+    onTitleChange: _.noop
 };
 
 export default BaseCard;

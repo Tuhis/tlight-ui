@@ -17,6 +17,7 @@ import { changeNodeValues } from "../../../actions/nodeActions";
 import { MODES, CONTROLLABLE_MODES } from "../../../constants/nodeOperatingModes";
 import { MIN_VALUE, MAX_VALUE } from "../../../constants/generic";
 import NormalButton from "../../presentational/NormalButton/NormalButton";
+import { selectEffect } from "../../../actions/effectActions";
 
 class NodeCard extends React.Component {
 
@@ -43,6 +44,10 @@ class NodeCard extends React.Component {
         this.props.onModeChange(this.props.id, item.data);
     }
 
+    handleEffectChange = (item, itemIndex) => {
+        this.props.onEffectChange(this.props.id, item.data);
+    }
+
     handleBrightnessChange({ value }) {
         this.props.onBrightnessChange(this.props.id, value);
     }
@@ -66,6 +71,11 @@ class NodeCard extends React.Component {
 
         const showColor =
             this.props.colorSupport && this.props.operatingMode === "SINGLE";
+
+        const showEffectPicker =
+            this.props.operatingMode === "EXTERNAL";
+
+        const selectedEffectIndex = _.findIndex(this.props.effects, ["data", this.props.selectedEffectId]);
 
         return (
             <BaseCard
@@ -142,6 +152,21 @@ class NodeCard extends React.Component {
                     </React.Fragment>
                 }
 
+                {showEffectPicker &&
+                    <React.Fragment>
+                        <Row50>
+                            <div>Effect:</div>
+
+                            <Dropdown
+                                data={this.props.effects}
+                                selectedItemIndex={selectedEffectIndex}
+                                onChange={this.handleEffectChange} />
+                        </Row50>
+
+                        <Divider />
+                    </React.Fragment>
+                }
+
                 <NormalButton
                     onClick={() => this.props.push("/nodes/" + this.props.id + "/lights")}>
                     Lights
@@ -163,11 +188,14 @@ NodeCard.propTypes = {
     red: PropTypes.number,
     green: PropTypes.number,
     blue: PropTypes.number,
+    effects: PropTypes.arrayOf(PropTypes.object).isRequired,
+    selectedEffectId: PropTypes.string,
     onModeChange: PropTypes.func.isRequired,
     onBrightnessChange: PropTypes.func.isRequired,
     onRedChange: PropTypes.func.isRequired,
     onGreenChange: PropTypes.func.isRequired,
-    onBlueChange: PropTypes.func.isRequired
+    onBlueChange: PropTypes.func.isRequired,
+    onEffectChange: PropTypes.func.isRequired
 };
 
 NodeCard.defaultProps = {
@@ -175,7 +203,8 @@ NodeCard.defaultProps = {
     onBrightnessChange: _.noop,
     onRedChange: _.noop,
     onGreenChange: _.noop,
-    onBlueChange: _.noop
+    onBlueChange: _.noop,
+    onEffectChange: _.noop
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -191,7 +220,9 @@ const mapStateToProps = (state, ownProps) => {
         brightness: _.get(state.nodeValues[id], "brightness"),
         red: _.get(state.nodeValues[id], "red"),
         green: _.get(state.nodeValues[id], "green"),
-        blue: _.get(state.nodeValues[id], "blue")
+        blue: _.get(state.nodeValues[id], "blue"),
+        effects: _.map(state.effects.configuredEffects, effect => ({ data: effect.id, label: effect.name })),
+        selectedEffectId: state.effects.effectsInUsePerNode[id].effectId
     };
 };
 
@@ -201,6 +232,7 @@ const mapDispatchToProps = dispatch => ({
     onRedChange: (nodeId, red) => dispatch(changeNodeValues(nodeId, { red })),
     onGreenChange: (nodeId, green) => dispatch(changeNodeValues(nodeId, { green })),
     onBlueChange: (nodeId, blue) => dispatch(changeNodeValues(nodeId, { blue })),
+    onEffectChange: (nodeId, effectId) => dispatch(selectEffect(nodeId, effectId)),
     push: path => dispatch(push(path))
 });
 

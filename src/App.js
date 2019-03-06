@@ -50,7 +50,9 @@ class App extends Component {
 
                 {!narrowViewport &&
                     <Sidebar>
-                        <BigLinkList links={sidebarLinks} />
+                        <BigLinkList
+                            links={sidebarLinks}
+                            rotateTextsOnNarrowList />
                     </Sidebar>
                 }
 

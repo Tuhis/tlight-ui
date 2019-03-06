@@ -37,7 +37,8 @@ const apiActionsFactory = (opts) => ({
     postNodeValues: params => postNodeValues(params, opts),
     postNodeValuesThrottled: _.throttle(params => postNodeValues(params, opts), 100, { leading: true, trailing: true}),
     postLightValues: params => postLightValues(params, opts),
-    postLightValuesThrottled: _.throttle(params => postLightValues(params, opts), 500, { leading: true, trailing: true})
+    postLightValuesThrottled: _.throttle(params => postLightValues(params, opts), 500, { leading: true, trailing: true}),
+    postEffectSetup: params => postEffectSetup(params, opts)
 });
 
 function postNodeValues({ nodeId, values }, { baseUrl }) {
@@ -85,6 +86,18 @@ function postLightValues({nodeId, lightId, values}, { baseUrl }) {
                 }
             ]
         })
+    });
+}
+
+function postEffectSetup({nodeId, body}, {baseUrl}) {
+    return fetch(`${baseUrl}/light/node/${nodeId}/plugin/source`, {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "application/json; charset=utf-8"
+        },
+        body: JSON.stringify(body)
     });
 }
 
