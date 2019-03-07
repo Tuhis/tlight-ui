@@ -14,7 +14,7 @@ const NormalButton = props => {
 
     let className = styles["normal-button"];
 
-    if (_.has(props, "css.cancelButton")) {
+    if (_.get(props, "css.cancelButton", false)) {
         className += " " + styles["cancel-button"];
     }
 

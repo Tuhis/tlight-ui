@@ -11,7 +11,8 @@ const BaseCard = props => {
         <div className={
             styles.basecard +
             " base-card " +
-            (props.autoHeight ? styles["auto-height"] : styles["fixed-height"])}
+            (props.autoHeight ? styles["auto-height"] : styles["fixed-height"]) + " " +
+            (props.autoWidth ? styles["auto-width"] : styles["fixed-width"])}
             style={{minHeight: props.minHeight}} >
 
             {props.showTitle &&
@@ -37,6 +38,7 @@ const BaseCard = props => {
 BaseCard.propTypes = {
     title: PropTypes.string.isRequired,
     autoHeight: PropTypes.bool.isRequired,
+    autoWidth: PropTypes.bool.isRequired,
     minHeight: PropTypes.number.isRequired,
     showTitle: PropTypes.bool.isRequired,
     editableTitle: PropTypes.bool.isRequired,
@@ -46,6 +48,7 @@ BaseCard.propTypes = {
 BaseCard.defaultProps = {
     title: "Card Title",
     autoHeight: false,
+    autoWidth: true,
     minHeight: 0,
     showTitle: true,
     editableTitle: false,

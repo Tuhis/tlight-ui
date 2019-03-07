@@ -107,7 +107,6 @@ class EffectCard extends React.Component {
 
                     Delete
                 </NormalButton>
-
             </BaseCard>
         );
     }

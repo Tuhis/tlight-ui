@@ -6,19 +6,38 @@ import _ from "lodash";
 import AddNewCard from "../../presentational/AddNewCard/AddNewCard";
 import EffectCard from "../EffectCard/EffectCard";
 import { createNewEffect } from "../../../actions/effectActions";
+import ResizeSensor from "css-element-queries/src/ResizeSensor";
 
 class EffectCardGrid extends React.Component {
+
+    containerRef = React.createRef();
+    resizeSensor = null;
 
     onAddNewEffectClick = () => {
         this.props.onAddNewEffect();
     }
+
+    // componentDidMount() {
+    //     this.resizeSensor = new ResizeSensor(this.containerRef.current, ({width, height}) => {
+    //         console.log("Size changed!");
+    //         console.log(width);
+    //         this.resizeSensor.detach();
+    //     });
+    // }
+
+    // componentWillUnmount() {
+    //     // Detach the resizeSensor. Not sure if mandatory, but better safe than sure right?
+    //     this.resizeSensor.detach();
+    // }
 
     render() {
         console.log("Rendering EffectCardGrid!");
         console.log(this.props);
 
         return (
-            <div className={styles["card-container"]}>
+            <div
+                ref={this.containerRef}
+                className={styles["card-container"]}>
                 {
                     _.map(this.props.effectIds, id =>
                         <EffectCard

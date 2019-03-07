@@ -8,4 +8,12 @@
     flex-shrink: 0;
     display: flex;
     flex-direction: row;
+    box-sizing: border-box;
+}
+
+@media screen and (min-width: 470px) {
+    .topbar {
+        border-right: 12px solid #15353E;
+        border-left: 12px solid #15353E;
+    }
 }

@@ -9,7 +9,8 @@ const AddNewCard = props => {
         <BaseCard
             showTitle={false}
             minHeight={props.minHeight}
-            autoHeight={props.autoHeight} >
+            autoHeight={props.autoHeight}
+            autoWidth={props.autoWidth} >
 
             <div
                 onClick={props.onClick}
@@ -30,12 +31,14 @@ AddNewCard.propTypes = {
     title: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired,
     minHeight: PropTypes.number,
-    autoHeight: PropTypes.bool
+    autoHeight: PropTypes.bool,
+    autoWidth: PropTypes.bool
 };
 
 AddNewCard.defaultProps = {
     title: "Add New",
-    onClick: _.noop
+    onClick: _.noop,
+    autoWidth: false
 };
 
 export default AddNewCard;
