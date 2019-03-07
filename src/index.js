@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from "redux";
 import { createBrowserHistory } from 'history'
-import { routerMiddleware } from 'connected-react-router'
+import { routerMiddleware, push, onLocationChanged } from 'connected-react-router'
 import logger from "redux-logger";
 import thunk from "redux-thunk";
 import { ConnectedRouter } from 'connected-react-router'
@@ -13,7 +13,6 @@ import createRootReducer from "./reducer";
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
 
 import { loadNodeData } from "./actions/nodeActions";
 import { createTlightApiMiddleware } from "./middleware/tlightApiMiddleware";
@@ -40,13 +39,22 @@ const store = createStore(
 // Effects are persisted in browser's localStorage. Debounce to prevent performance issues.
 store.subscribe(_.debounce(() => {
     const stateToPersist = {
-        effects: store.getState().effects
+        effects: store.getState().effects,
+        router: store.getState().router
     };
 
     localStorage.setItem('reduxState', JSON.stringify(stateToPersist));
 }, 500, { trailing: true }));
 
 store.dispatch(loadNodeData());
+
+const location = store.getState().router.location || {};
+
+if (location.pathname !== history.location.pathname) {
+    store.dispatch(push(location.pathname));
+}
+
+store.dispatch(onLocationChanged(history.location, history.action, true));
 
 ReactDOM.render(
     <Provider store={store}>
