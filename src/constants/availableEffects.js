@@ -56,6 +56,8 @@ export const EFFECT_PROPERTIES = {
                             name: "duration",
                             description: "The time it takes to go from start color to end in seconds",
                             type: "int",
+                            min: 1,
+                            max: 255,
                             required: true
                         },
                         {
