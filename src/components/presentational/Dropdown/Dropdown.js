@@ -19,12 +19,14 @@ class Dropdown extends React.Component {
         this.handleDocumentClick = this.handleDocumentClick.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.selectedItemIndex !== this.state.selectedItemIndex) {
-            this.setState({
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.selectedItemIndex !== prevState.selectedItemIndex) {
+            return {
                 selectedItemIndex: nextProps.selectedItemIndex
-            });
+            };
         }
+
+        return null;
     }
 
     componentDidMount() {
@@ -38,7 +40,8 @@ class Dropdown extends React.Component {
     }
 
     handleDocumentClick (e) {
-        if (this.ref.current.contains(e.target)) {
+        // On Edge this.ref.current is null sometimes... strange.
+        if (this.ref.current === null || this.ref.current.contains(e.target)) {
             // Click in this component, dont do anything.
             return;
         }

@@ -17,17 +17,20 @@ export class SliderAndInput extends React.Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.value !== this.state.value) {
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.value !== prevState.value) {
 
             if (_.isNaN(Number(nextProps.value))) {
-                throw new Error("Invalid type! Expected number!");
+                console.log(nextProps.value);
+                console.error("Invalid type! Expected number!");
             }
 
-            this.setState({
+            return {
                 value: nextProps.value
-            });
+            };
         }
+
+        return null;
     }
 
     handleChange({value}) {
