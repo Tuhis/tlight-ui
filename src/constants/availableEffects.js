@@ -22,14 +22,19 @@ export const EFFECT_PROPERTIES = {
     sACN: {
         displayName: "Empty Epsilon",
         description: "sACN client for integrating the TLight to 3rd party systems, such as Empty Epsilon.",
-        effectProperties: [
-            {
-                name: "startChannel",
-                description: "sACN channel to from witch onwards to start listening",
-                type: "int",
-                required: true
-            }
-        ]
+        effectProperties: [{
+            name: "pluginOpts",
+            type: "object",
+            required: true,
+            properties: [
+                {
+                    name: "startChannel",
+                    description: "sACN channel to from witch onwards to start listening",
+                    type: "int",
+                    required: true
+                }
+            ]
+        }]
     },
     // TODO: SmoothColors will be reworked on the backend side to have better params...
     SmoothColors: {

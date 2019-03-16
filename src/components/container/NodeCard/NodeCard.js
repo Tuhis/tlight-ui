@@ -45,7 +45,7 @@ class NodeCard extends React.Component {
     }
 
     handleEffectChange = (item, itemIndex) => {
-        this.props.onEffectChange(this.props.id, item.data);
+        this.props.onEffectChange(this.props.id, item.data, this.props.colorSupport);
     }
 
     handleBrightnessChange({ value }) {
@@ -232,7 +232,7 @@ const mapDispatchToProps = dispatch => ({
     onRedChange: (nodeId, red) => dispatch(changeNodeValues(nodeId, { red })),
     onGreenChange: (nodeId, green) => dispatch(changeNodeValues(nodeId, { green })),
     onBlueChange: (nodeId, blue) => dispatch(changeNodeValues(nodeId, { blue })),
-    onEffectChange: (nodeId, effectId) => dispatch(selectEffect(nodeId, effectId)),
+    onEffectChange: (nodeId, effectId, nodeColorSupport) => dispatch(selectEffect(nodeId, effectId, nodeColorSupport)),
     push: path => dispatch(push(path))
 });
 

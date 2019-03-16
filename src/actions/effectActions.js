@@ -51,10 +51,29 @@ export const deleteEffect = (id) => ({
     }
 });
 
-export const selectEffect = (nodeId, effectId) => {
+export const selectEffect = (nodeId, effectId, color) => {
     return (dispatch, getState) => {
         const effectConfiguration = _.find(getState().effects.configuredEffects, ["id", effectId]);
         const effectParams = effectConfiguration.effectProperties.effect;
+
+        // Few hacks
+        if (!_.isUndefined(color)) {
+            effectParams.colors = color;
+        }
+
+        if (color === false && effectParams.lightCount === 3) {
+            effectParams.pluginOpts.effectOpts.startBrightness = [
+                effectParams.pluginOpts.effectOpts.startColor.red,
+                effectParams.pluginOpts.effectOpts.startColor.green,
+                effectParams.pluginOpts.effectOpts.startColor.blue,
+            ];
+
+            effectParams.pluginOpts.effectOpts.endBrightness = [
+                effectParams.pluginOpts.effectOpts.endColor.red,
+                effectParams.pluginOpts.effectOpts.endColor.green,
+                effectParams.pluginOpts.effectOpts.endColor.blue,
+            ];
+        }
 
         effectParams.name = effectConfiguration.type;
 
