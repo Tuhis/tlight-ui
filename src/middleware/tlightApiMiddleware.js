@@ -33,11 +33,11 @@ function isApiAction({ type }) {
 }
 
 const apiActionsFactory = (opts) => ({
-    fetchNodeData: () => fetch(opts.baseUrl + "/light/node"),
+    fetchNodeData: () => fetch(opts.baseUrl + "/lights/nodes"),
     postNodeValues: params => postNodeValues(params, opts),
-    postNodeValuesThrottled: _.throttle(params => postNodeValues(params, opts), 100, { leading: true, trailing: true}),
+    postNodeValuesThrottled: _.throttle(params => postNodeValues(params, opts), 100, { leading: true, trailing: true }),
     postLightValues: params => postLightValues(params, opts),
-    postLightValuesThrottled: _.throttle(params => postLightValues(params, opts), 500, { leading: true, trailing: true}),
+    postLightValuesThrottled: _.throttle(params => postLightValues(params, opts), 500, { leading: true, trailing: true }),
     postEffectSetup: params => postEffectSetup(params, opts)
 });
 
@@ -46,7 +46,7 @@ function postNodeValues({ nodeId, values }, { baseUrl }) {
         throw new Error("NodeId or values not given!");
     }
 
-    return fetch(baseUrl + "/light/node/" + nodeId, {
+    return fetch(baseUrl + "/lights/nodes/" + nodeId, {
         method: "POST",
         mode: "cors",
         cache: "no-cache",
@@ -60,14 +60,14 @@ function postNodeValues({ nodeId, values }, { baseUrl }) {
     });
 }
 
-function postLightValues({nodeId, lightId, values}, { baseUrl }) {
+function postLightValues({ nodeId, lightId, values }, { baseUrl }) {
     console.log("TODO: Actual request");
 
     // return Promise.resolve();
 
 
 
-    return fetch(baseUrl + "/light/node/" + nodeId, {
+    return fetch(baseUrl + "/lights/nodes/" + nodeId, {
         method: "POST",
         mode: "cors",
         cache: "no-cache",
@@ -89,8 +89,8 @@ function postLightValues({nodeId, lightId, values}, { baseUrl }) {
     });
 }
 
-function postEffectSetup({nodeId, body}, {baseUrl}) {
-    return fetch(`${baseUrl}/light/node/${nodeId}/plugin/source`, {
+function postEffectSetup({ nodeId, body }, { baseUrl }) {
+    return fetch(`${baseUrl}/lights/nodes/${nodeId}/plugin/source`, {
         method: "POST",
         mode: "cors",
         cache: "no-cache",
