@@ -1,37 +1,14 @@
-import _ from "lodash";
+import { nodesReceived } from '../slices/nodesSlice';
+import { nodeValuesInitialized, nodeValuesChanged } from '../slices/nodeValuesSlice';
+import { lightValuesInitialized } from '../slices/lightValuesSlice';
+import { effectsInitializedForNodes } from '../slices/effectsSlice';
 
-export const NODES_RECEIVED = "NODES_RECEIVED";
-export const NODE_RECEIVED = "NODE_RECEIVED";
-export const NODE_VALUES_CHANGED = "NODE_VALUES_CHANGED";
+// Export for compatibility (can be removed later if not used elsewhere)
+export const NODES_RECEIVED = "nodes/nodesReceived";
+export const NODE_VALUES_CHANGED = "nodeValues/nodeValuesChanged";
 
-export function nodesReceived(nodes) {
-    return {
-        type: NODES_RECEIVED,
-        payload: {
-            nodes
-        }
-    };
-}
-
-export function nodeReceived(nodeId, node) {
-    return {
-        type: NODE_RECEIVED,
-        payload: {
-            nodeId,
-            node
-        }
-    };
-}
-
-export function nodeValuesChanged(nodeId, values) {
-    return {
-        type: NODE_VALUES_CHANGED,
-        payload: {
-            nodeId,
-            values
-        }
-    };
-}
+// Re-export actions from slices
+export { nodesReceived, nodeValuesChanged };
 
 export function changeNodeValues(nodeId, values) {
     return dispatch => {
@@ -45,7 +22,7 @@ export function changeNodeValues(nodeId, values) {
                 }
             }
         })
-            .then(() => dispatch(nodeValuesChanged(nodeId, values)));
+            .then(() => dispatch(nodeValuesChanged({ nodeId, values })));
     };
 }
 
@@ -65,7 +42,16 @@ export function loadNodeData() {
 function receiveNodeData(nodeData) {
     console.log("Got NodeData!");
     console.log(nodeData);
-    return nodesReceived(nodeData.nodes);
+
+    // Return a thunk that dispatches all related slice actions
+    return dispatch => {
+        const nodes = nodeData.nodes;
+        const payload = { nodes };
+
+        // Dispatch to all slices that need this data
+        dispatch(nodesReceived(payload));
+        dispatch(nodeValuesInitialized(payload));
+        dispatch(lightValuesInitialized(payload));
+        dispatch(effectsInitializedForNodes(payload));
+    };
 }
-
-

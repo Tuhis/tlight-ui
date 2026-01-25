@@ -4,22 +4,28 @@ import PropTypes from "prop-types";
 import styles from "./AddNewCard.module.css";
 import BaseCard from "../BaseCard/BaseCard";
 
-const AddNewCard = props => {
+const AddNewCard = ({
+    title = "Add New",
+    onClick = _.noop,
+    autoWidth = false,
+    minHeight,
+    autoHeight
+}) => {
     return (
         <BaseCard
             showTitle={false}
-            minHeight={props.minHeight}
-            autoHeight={props.autoHeight}
-            autoWidth={props.autoWidth} >
+            minHeight={minHeight}
+            autoHeight={autoHeight}
+            autoWidth={autoWidth} >
 
             <div
-                onClick={props.onClick}
+                onClick={onClick}
                 className={styles.container}>
                 <div className={styles.icon}>
                     +
                 </div>
                 <div className={styles.text}>
-                    {props.title}
+                    {title}
                 </div>
             </div>
 
@@ -28,17 +34,11 @@ const AddNewCard = props => {
 };
 
 AddNewCard.propTypes = {
-    title: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired,
+    title: PropTypes.string,
+    onClick: PropTypes.func,
     minHeight: PropTypes.number,
     autoHeight: PropTypes.bool,
     autoWidth: PropTypes.bool
-};
-
-AddNewCard.defaultProps = {
-    title: "Add New",
-    onClick: _.noop,
-    autoWidth: false
 };
 
 export default AddNewCard;

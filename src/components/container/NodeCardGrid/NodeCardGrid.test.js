@@ -2,10 +2,15 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { MemoryRouter } from 'react-router-dom';
 import NodeCardGrid from './NodeCardGrid';
 
+import { vi } from 'vitest';
+
 // Mock the child component to avoid deep rendering
-jest.mock('../NodeCard/NodeCard', () => (props) => <div data-testid="node-card" data-id={props.id}>NodeCard {props.id}</div>);
+vi.mock('../NodeCard/NodeCard', () => ({
+    default: (props) => <div data-testid="node-card" data-id={props.id}>NodeCard {props.id}</div>
+}));
 
 const mockStore = configureStore([]);
 
@@ -15,16 +20,40 @@ describe('NodeCardGrid', () => {
     beforeEach(() => {
         store = mockStore({
             nodes: {
-                'node-1': { id: 'node-1', name: 'Node 1' },
-                'node-2': { id: 'node-2', name: 'Node 2' }
-            }
+                'node-1': {
+                    id: 'node-1',
+                    name: 'Node 1',
+                    type: 'mock',
+                    features: { count: 10, addressable: true, color: true }
+                },
+                'node-2': {
+                    id: 'node-2',
+                    name: 'Node 2',
+                    type: 'mock',
+                    features: { count: 5, addressable: false, color: false }
+                }
+            },
+            nodeValues: {
+                'node-1': { brightness: 100 },
+                'node-2': { brightness: 50 },
+            },
+            effects: {
+                configuredEffects: [],
+                effectsInUsePerNode: {
+                    'node-1': { effectId: 'effect-1' },
+                    'node-2': { effectId: 'effect-2' }
+                }
+            },
+            lightValues: {}
         });
     });
 
     it('should calculate nodeIds from state and render NodeCards', () => {
         render(
             <Provider store={store}>
-                <NodeCardGrid />
+                <MemoryRouter>
+                    <NodeCardGrid />
+                </MemoryRouter>
             </Provider>
         );
 
@@ -37,7 +66,11 @@ describe('NodeCardGrid', () => {
 
     it('should render empty grid when no nodes', () => {
         store = mockStore({
-            nodes: {}
+            nodes: {},
+            effects: {
+                configuredEffects: [],
+                effectsInUsePerNode: {}
+            }
         });
 
         render(

@@ -6,53 +6,53 @@ import Divider from "../Divider/Divider";
 
 import "./BaseCardOverride.css";
 
-const BaseCard = props => {
+const BaseCard = ({
+    title = "Card Title",
+    autoHeight = false,
+    autoWidth = true,
+    minHeight = 0,
+    showTitle = true,
+    editableTitle = false,
+    onTitleChange = _.noop,
+    children
+}) => {
     return (
         <div className={
             styles.basecard +
             " base-card " +
-            (props.autoHeight ? styles["auto-height"] : styles["fixed-height"]) + " " +
-            (props.autoWidth ? styles["auto-width"] : styles["fixed-width"])}
-            style={{minHeight: props.minHeight}} >
+            (autoHeight ? styles["auto-height"] : styles["fixed-height"]) + " " +
+            (autoWidth ? styles["auto-width"] : styles["fixed-width"])}
+            style={{ minHeight: minHeight }} >
 
-            {props.showTitle &&
+            {showTitle &&
                 <React.Fragment>
-                    {props.editableTitle ?
+                    {editableTitle ?
                         <input
                             className={styles["title-input"]}
                             type="text"
-                            value={props.title}
-                            onChange={(e) => props.onTitleChange(e.target.value)} />
+                            value={title}
+                            onChange={(e) => onTitleChange(e.target.value)} />
                         :
-                        <h2>{props.title}</h2>
+                        <h2>{title}</h2>
                     }
                     <Divider className={styles.divider} />
                 </React.Fragment>
             }
 
-            {props.children}
+            {children}
         </div>
     );
 };
 
 BaseCard.propTypes = {
-    title: PropTypes.string.isRequired,
-    autoHeight: PropTypes.bool.isRequired,
-    autoWidth: PropTypes.bool.isRequired,
-    minHeight: PropTypes.number.isRequired,
-    showTitle: PropTypes.bool.isRequired,
-    editableTitle: PropTypes.bool.isRequired,
-    onTitleChange: PropTypes.func.isRequired
-};
-
-BaseCard.defaultProps = {
-    title: "Card Title",
-    autoHeight: false,
-    autoWidth: true,
-    minHeight: 0,
-    showTitle: true,
-    editableTitle: false,
-    onTitleChange: _.noop
+    title: PropTypes.string,
+    autoHeight: PropTypes.bool,
+    autoWidth: PropTypes.bool,
+    minHeight: PropTypes.number,
+    showTitle: PropTypes.bool,
+    editableTitle: PropTypes.bool,
+    onTitleChange: PropTypes.func,
+    children: PropTypes.node
 };
 
 export default BaseCard;

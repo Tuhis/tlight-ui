@@ -1,33 +1,36 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import styles from "./LightCardGrid.module.css";
 import _ from "lodash";
 import LightCard from "../LightCard/LightCard";
 
-class LightCardGrid extends React.Component {
+function LightCardGrid() {
+    // Use React Router v6 useParams hook
+    const { nodeId } = useParams();
+    const lightIds = useSelector(state => {
+        if (!nodeId || !state.lightValues[nodeId]) {
+            return [];
+        }
+        return _.keys(state.lightValues[nodeId]);
+    });
 
-    renderLightCards() {
-        return _.map(this.props.lightIds, id => {
-            return (
-                <LightCard
-                    key={id}
-                    id={id}
-                    nodeId={this.props.nodeId} />
-            );
-        });
-    }
+    console.log("Rendering LightCardGrid!");
+    console.log({ lightIds, nodeId });
 
-    render() {
-        console.log("Rendering LightCardGrid!");
-        console.log(this.props);
-
-        return (
-            <div className={styles["card-container"]}>
-                {this.renderLightCards()}
-            </div>
-        );
-    }
+    return (
+        <div className={styles["card-container"]}>
+            {_.map(lightIds, id => {
+                return (
+                    <LightCard
+                        key={id}
+                        id={id}
+                        nodeId={nodeId} />
+                );
+            })}
+        </div>
+    );
 }
 
 LightCardGrid.propTypes = {
@@ -39,15 +42,4 @@ LightCardGrid.defaultProps = {
     lightIds: []
 };
 
-const mapStateToProps = (state, ownProps) => {
-    const nodeId = _.get(ownProps, "match.params.nodeId", null);
-
-    return {
-        lightIds: ((lights) => _.keys(lights))(state.lightValues[nodeId]),
-        nodeId
-    }
-};
-
-export default connect(
-    mapStateToProps
-)(LightCardGrid);
+export default LightCardGrid;

@@ -1,17 +1,9 @@
-import _ from "lodash";
+import { lightValuesChanged } from '../slices/lightValuesSlice';
 
-export const LIGHT_VALUES_CHANGED = "LIGHT_VALUES_CHANGED";
+export const LIGHT_VALUES_CHANGED = "lightValues/lightValuesChanged";
 
-export function lightValuesChanged(nodeId, lightId, values) {
-    return {
-        type: LIGHT_VALUES_CHANGED,
-        payload: {
-            nodeId,
-            lightId,
-            values
-        }
-    };
-}
+// Re-export the action creator from the slice for compatibility
+export { lightValuesChanged };
 
 export function changeLightValues(nodeId, lightId, values) {
     return dispatch => {
@@ -26,8 +18,6 @@ export function changeLightValues(nodeId, lightId, values) {
                 }
             }
         })
-            .then(() => dispatch(lightValuesChanged(nodeId, lightId, values)));
+            .then(() => dispatch(lightValuesChanged({ nodeId, lightId, values })));
     };
 }
-
-

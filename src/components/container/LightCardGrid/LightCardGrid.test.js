@@ -2,9 +2,14 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import LightCardGrid from './LightCardGrid';
+import { vi } from 'vitest';
 
-jest.mock('../LightCard/LightCard', () => (props) => <div data-testid="light-card" data-id={props.id}>LightCard {props.id}</div>);
+// Configure mock for child component
+vi.mock('../LightCard/LightCard', () => ({
+    default: (props) => <div data-testid="light-card" data-id={props.id}>LightCard {props.id}</div>
+}));
 
 const mockStore = configureStore([]);
 
@@ -23,12 +28,13 @@ describe('LightCardGrid', () => {
     });
 
     it('should render LightCards for specific node', () => {
-        // Mocking react-router match prop
-        const match = { params: { nodeId: 'node-1' } };
-
         render(
             <Provider store={store}>
-                <LightCardGrid match={match} />
+                <MemoryRouter initialEntries={['/nodes/node-1']}>
+                    <Routes>
+                        <Route path="/nodes/:nodeId" element={<LightCardGrid />} />
+                    </Routes>
+                </MemoryRouter>
             </Provider>
         );
 
@@ -39,11 +45,13 @@ describe('LightCardGrid', () => {
     });
 
     it('should render empty if node has no lights', () => {
-        const match = { params: { nodeId: 'unknown-node' } };
-
         render(
             <Provider store={store}>
-                <LightCardGrid match={match} />
+                <MemoryRouter initialEntries={['/nodes/unknown-node']}>
+                    <Routes>
+                        <Route path="/nodes/:nodeId" element={<LightCardGrid />} />
+                    </Routes>
+                </MemoryRouter>
             </Provider>
         );
 

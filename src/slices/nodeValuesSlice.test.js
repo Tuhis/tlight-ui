@@ -1,14 +1,13 @@
-import nodeValues from './nodeValues';
-import { NODES_RECEIVED, NODE_VALUES_CHANGED } from '../actions/nodeActions';
+import nodeValuesReducer, { nodeValuesInitialized, nodeValuesChanged } from './nodeValuesSlice';
 
 describe('nodeValues reducer', () => {
     it('should return initial state when state is undefined', () => {
         const action = { type: 'UNKNOWN_ACTION' };
-        const result = nodeValues(undefined, action);
+        const result = nodeValuesReducer(undefined, action);
         expect(result).toEqual({});
     });
 
-    describe('NODES_RECEIVED', () => {
+    describe('nodeValuesInitialized', () => {
         it('should extract node values from nodes', () => {
             const mockNodes = [
                 {
@@ -30,12 +29,8 @@ describe('nodeValues reducer', () => {
                 }
             ];
 
-            const action = {
-                type: NODES_RECEIVED,
-                payload: { nodes: mockNodes }
-            };
-
-            const result = nodeValues(undefined, action);
+            const action = nodeValuesInitialized({ nodes: mockNodes });
+            const result = nodeValuesReducer(undefined, action);
 
             expect(result).toEqual({
                 'node-1': {
@@ -68,12 +63,8 @@ describe('nodeValues reducer', () => {
                 }
             ];
 
-            const action = {
-                type: NODES_RECEIVED,
-                payload: { nodes: mockNodes }
-            };
-
-            const result = nodeValues(undefined, action);
+            const action = nodeValuesInitialized({ nodes: mockNodes });
+            const result = nodeValuesReducer(undefined, action);
 
             expect(result['node-1']).toMatchObject({
                 id: 'node-1',
@@ -82,7 +73,7 @@ describe('nodeValues reducer', () => {
         });
     });
 
-    describe('NODE_VALUES_CHANGED', () => {
+    describe('nodeValuesChanged', () => {
         it('should update values for specific node', () => {
             const initialState = {
                 'node-1': {
@@ -95,15 +86,12 @@ describe('nodeValues reducer', () => {
                 }
             };
 
-            const action = {
-                type: NODE_VALUES_CHANGED,
-                payload: {
-                    nodeId: 'node-1',
-                    values: { brightness: 200, green: 128 }
-                }
-            };
+            const action = nodeValuesChanged({
+                nodeId: 'node-1',
+                values: { brightness: 200, green: 128 }
+            });
 
-            const result = nodeValues(initialState, action);
+            const result = nodeValuesReducer(initialState, action);
 
             expect(result['node-1']).toEqual({
                 id: 'node-1',
@@ -118,15 +106,12 @@ describe('nodeValues reducer', () => {
         it('should create entry if node does not exist', () => {
             const initialState = {};
 
-            const action = {
-                type: NODE_VALUES_CHANGED,
-                payload: {
-                    nodeId: 'new-node',
-                    values: { brightness: 150, mode: 'SINGLE' }
-                }
-            };
+            const action = nodeValuesChanged({
+                nodeId: 'new-node',
+                values: { brightness: 150, mode: 'SINGLE' }
+            });
 
-            const result = nodeValues(initialState, action);
+            const result = nodeValuesReducer(initialState, action);
 
             expect(result['new-node']).toEqual({
                 brightness: 150,
@@ -140,15 +125,12 @@ describe('nodeValues reducer', () => {
                 'node-2': { id: 'node-2', brightness: 200 }
             };
 
-            const action = {
-                type: NODE_VALUES_CHANGED,
-                payload: {
-                    nodeId: 'node-1',
-                    values: { brightness: 150 }
-                }
-            };
+            const action = nodeValuesChanged({
+                nodeId: 'node-1',
+                values: { brightness: 150 }
+            });
 
-            const result = nodeValues(initialState, action);
+            const result = nodeValuesReducer(initialState, action);
 
             expect(result['node-1'].brightness).toBe(150);
             expect(result['node-2'].brightness).toBe(200);
@@ -166,15 +148,12 @@ describe('nodeValues reducer', () => {
                 }
             };
 
-            const action = {
-                type: NODE_VALUES_CHANGED,
-                payload: {
-                    nodeId: 'node-1',
-                    values: { mode: 'EXTERNAL' }
-                }
-            };
+            const action = nodeValuesChanged({
+                nodeId: 'node-1',
+                values: { mode: 'EXTERNAL' }
+            });
 
-            const result = nodeValues(initialState, action);
+            const result = nodeValuesReducer(initialState, action);
 
             expect(result['node-1']).toEqual({
                 id: 'node-1',

@@ -1,15 +1,13 @@
-import lightValues from './lightValues';
-import { NODES_RECEIVED } from '../actions/nodeActions';
-import { LIGHT_VALUES_CHANGED } from '../actions/lightActions';
+import lightValuesReducer, { lightValuesInitialized, lightValuesChanged } from './lightValuesSlice';
 
 describe('lightValues reducer', () => {
     it('should return initial state when state is undefined', () => {
         const action = { type: 'UNKNOWN_ACTION' };
-        const result = lightValues(undefined, action);
+        const result = lightValuesReducer(undefined, action);
         expect(result).toEqual({});
     });
 
-    describe('NODES_RECEIVED', () => {
+    describe('lightValuesInitialized', () => {
         it('should extract light values from nodes', () => {
             const mockNodes = [
                 {
@@ -32,14 +30,10 @@ describe('lightValues reducer', () => {
                 }
             ];
 
-            const action = {
-                type: NODES_RECEIVED,
-                payload: { nodes: mockNodes }
-            };
+            const action = lightValuesInitialized({ nodes: mockNodes });
+            const result = lightValuesReducer(undefined, action);
 
-            const result = lightValues(undefined, action);
-
-            expect(result[0]['node-1-light-1']).toEqual({
+            expect(result['node-1']['node-1-light-1']).toEqual({
                 id: 'node-1-light-1',
                 type: 'rgb',
                 brightness: 200,
@@ -48,7 +42,7 @@ describe('lightValues reducer', () => {
                 blue: 0
             });
 
-            expect(result[0]['node-1-light-2']).toEqual({
+            expect(result['node-1']['node-1-light-2']).toEqual({
                 id: 'node-1-light-2',
                 type: 'rgb',
                 brightness: 150,
@@ -67,12 +61,8 @@ describe('lightValues reducer', () => {
                 }
             ];
 
-            const action = {
-                type: NODES_RECEIVED,
-                payload: { nodes: mockNodes }
-            };
-
-            const result = lightValues(undefined, action);
+            const action = lightValuesInitialized({ nodes: mockNodes });
+            const result = lightValuesReducer(undefined, action);
 
             expect(result).toBeDefined();
         });
@@ -92,14 +82,10 @@ describe('lightValues reducer', () => {
                 }
             ];
 
-            const action = {
-                type: NODES_RECEIVED,
-                payload: { nodes: mockNodes }
-            };
+            const action = lightValuesInitialized({ nodes: mockNodes });
+            const result = lightValuesReducer(undefined, action);
 
-            const result = lightValues(undefined, action);
-
-            expect(result[0]['node-1-light-1']).toMatchObject({
+            expect(result['node-1']['node-1-light-1']).toMatchObject({
                 id: 'node-1-light-1',
                 type: 'dimmer',
                 brightness: 180
@@ -107,7 +93,7 @@ describe('lightValues reducer', () => {
         });
     });
 
-    describe('LIGHT_VALUES_CHANGED', () => {
+    describe('lightValuesChanged', () => {
         it('should update values for specific light', () => {
             const initialState = {
                 'node-1': {
@@ -122,16 +108,13 @@ describe('lightValues reducer', () => {
                 }
             };
 
-            const action = {
-                type: LIGHT_VALUES_CHANGED,
-                payload: {
-                    nodeId: 'node-1',
-                    lightId: 'node-1-light-1',
-                    values: { brightness: 200, green: 128 }
-                }
-            };
+            const action = lightValuesChanged({
+                nodeId: 'node-1',
+                lightId: 'node-1-light-1',
+                values: { brightness: 200, green: 128 }
+            });
 
-            const result = lightValues(initialState, action);
+            const result = lightValuesReducer(initialState, action);
 
             expect(result['node-1']['node-1-light-1']).toEqual({
                 id: 'node-1-light-1',
@@ -146,16 +129,13 @@ describe('lightValues reducer', () => {
         it('should create entry if light does not exist', () => {
             const initialState = {};
 
-            const action = {
-                type: LIGHT_VALUES_CHANGED,
-                payload: {
-                    nodeId: 'node-1',
-                    lightId: 'node-1-light-1',
-                    values: { brightness: 150, red: 255 }
-                }
-            };
+            const action = lightValuesChanged({
+                nodeId: 'node-1',
+                lightId: 'node-1-light-1',
+                values: { brightness: 150, red: 255 }
+            });
 
-            const result = lightValues(initialState, action);
+            const result = lightValuesReducer(initialState, action);
 
             expect(result['node-1']['node-1-light-1']).toEqual({
                 brightness: 150,
@@ -171,16 +151,13 @@ describe('lightValues reducer', () => {
                 }
             };
 
-            const action = {
-                type: LIGHT_VALUES_CHANGED,
-                payload: {
-                    nodeId: 'node-1',
-                    lightId: 'node-1-light-1',
-                    values: { brightness: 150 }
-                }
-            };
+            const action = lightValuesChanged({
+                nodeId: 'node-1',
+                lightId: 'node-1-light-1',
+                values: { brightness: 150 }
+            });
 
-            const result = lightValues(initialState, action);
+            const result = lightValuesReducer(initialState, action);
 
             expect(result['node-1']['node-1-light-1'].brightness).toBe(150);
             expect(result['node-1']['node-1-light-2'].brightness).toBe(200);
@@ -196,16 +173,13 @@ describe('lightValues reducer', () => {
                 }
             };
 
-            const action = {
-                type: LIGHT_VALUES_CHANGED,
-                payload: {
-                    nodeId: 'node-1',
-                    lightId: 'node-1-light-1',
-                    values: { brightness: 150 }
-                }
-            };
+            const action = lightValuesChanged({
+                nodeId: 'node-1',
+                lightId: 'node-1-light-1',
+                values: { brightness: 150 }
+            });
 
-            const result = lightValues(initialState, action);
+            const result = lightValuesReducer(initialState, action);
 
             expect(result['node-1']['node-1-light-1'].brightness).toBe(150);
             expect(result['node-2']['node-2-light-1'].brightness).toBe(200);
@@ -224,16 +198,13 @@ describe('lightValues reducer', () => {
                 }
             };
 
-            const action = {
-                type: LIGHT_VALUES_CHANGED,
-                payload: {
-                    nodeId: 'node-1',
-                    lightId: 'node-1-light-1',
-                    values: { red: 128 }
-                }
-            };
+            const action = lightValuesChanged({
+                nodeId: 'node-1',
+                lightId: 'node-1-light-1',
+                values: { red: 128 }
+            });
 
-            const result = lightValues(initialState, action);
+            const result = lightValuesReducer(initialState, action);
 
             expect(result['node-1']['node-1-light-1']).toEqual({
                 type: 'rgb',

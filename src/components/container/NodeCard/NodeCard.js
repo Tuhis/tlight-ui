@@ -1,8 +1,8 @@
 import _ from "lodash";
 import PropTypes from "prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import { push } from "connected-react-router";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import BaseCard from "../../presentational/BaseCard/BaseCard";
 import CardAdjustmentRow from "../../presentational/CardAdjustmentRow/CardAdjustmentRow";
@@ -20,199 +20,196 @@ import NormalButton from "../../presentational/NormalButton/NormalButton";
 import { selectEffect } from "../../../actions/effectActions";
 import ColorWrapper from "../../presentational/ColorWrapper/ColorWrapper";
 
-class NodeCard extends React.Component {
+function NodeCard({ id }) {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    constructor(props) {
-        super(props);
+    const node = useSelector(state => state.nodes[id]);
+    const nodeValue = useSelector(state => state.nodeValues[id]);
+    const effects = useSelector(state => _.map(state.effects.configuredEffects, effect => ({ data: effect.id, label: effect.name })));
+    const selectedEffectId = useSelector(state => state.effects.effectsInUsePerNode[id].effectId);
 
-        this.state = {
-            modeIndex: _.findIndex(MODES, ['data', this.props.operatingMode]), // What if mismatch?
-            useColorPicker: true
-        }
+    const name = node.name;
+    const type = node.type;
+    const lightCount = node.features.count;
+    const addressable = node.features.addressable;
+    const colorSupport = node.features.color;
+    const operatingMode = nodeValue.mode;
+    const brightness = _.get(nodeValue, "brightness");
+    const red = _.get(nodeValue, "red");
+    const green = _.get(nodeValue, "green");
+    const blue = _.get(nodeValue, "blue");
 
-        this.handleModeChange = this.handleModeChange.bind(this);
-        this.handleBrightnessChange = this.handleBrightnessChange.bind(this);
-        this.handleRedChange = this.handleRedChange.bind(this);
-        this.handleGreenChange = this.handleGreenChange.bind(this);
-        this.handleBlueChange = this.handleBlueChange.bind(this);
-        this.handleColorPickerChange = this.handleColorPickerChange.bind(this);
-        this.toggleColorPicker = this.toggleColorPicker.bind(this);
-    }
+    const [modeIndex, setModeIndex] = useState(_.findIndex(MODES, ['data', operatingMode]));
+    const [useColorPicker, setUseColorPicker] = useState(true);
 
-    handleModeChange(item, modeIndex) {
-        // TODO: Get rid of state
-        this.setState({
-            modeIndex
-        });
+    const handleModeChange = (item, newModeIndex) => {
+        setModeIndex(newModeIndex);
+        dispatch(changeNodeValues(id, { mode: item.data }));
+    };
 
-        this.props.onModeChange(this.props.id, item.data);
-    }
+    const handleEffectChange = (item, itemIndex) => {
+        dispatch(selectEffect(id, item.data, colorSupport));
+    };
 
-    handleEffectChange = (item, itemIndex) => {
-        this.props.onEffectChange(this.props.id, item.data, this.props.colorSupport);
-    }
+    const handleBrightnessChange = ({ value }) => {
+        dispatch(changeNodeValues(id, { brightness: value }));
+    };
 
-    handleBrightnessChange({ value }) {
-        this.props.onBrightnessChange(this.props.id, value);
-    }
+    const handleRedChange = ({ value }) => {
+        dispatch(changeNodeValues(id, { red: value }));
+    };
 
-    handleRedChange({ value }) {
-        this.props.onRedChange(this.props.id, value);
-    }
+    const handleGreenChange = ({ value }) => {
+        dispatch(changeNodeValues(id, { green: value }));
+    };
 
-    handleGreenChange({ value }) {
-        this.props.onGreenChange(this.props.id, value);
-    }
+    const handleBlueChange = ({ value }) => {
+        dispatch(changeNodeValues(id, { blue: value }));
+    };
 
-    handleBlueChange({ value }) {
-        this.props.onBlueChange(this.props.id, value);
-    }
-
-    handleColorPickerChange({ r, g, b }) {
-        this.props.onColorChange(this.props.id, {
+    const handleColorPickerChange = ({ r, g, b }) => {
+        dispatch(changeNodeValues(id, {
             red: r,
             green: g,
             blue: b
-        });
-    }
+        }));
+    };
 
-    toggleColorPicker() {
-        this.setState({
-            useColorPicker: !this.state.useColorPicker
-        });
-    }
+    const toggleColorPicker = () => {
+        setUseColorPicker(!useColorPicker);
+    };
 
-    render() {
-        console.log(this.props);
-        const showBrightness =
-            !_.isUndefined(this.props.brightness) && _.includes(CONTROLLABLE_MODES, this.props.operatingMode);
+    console.log({ id, name, operatingMode });
 
-        const showColor =
-            this.props.colorSupport && this.props.operatingMode === "SINGLE";
+    const showBrightness =
+        !_.isUndefined(brightness) && _.includes(CONTROLLABLE_MODES, operatingMode);
 
-        const showEffectPicker =
-            this.props.operatingMode === "EXTERNAL";
+    const showColor =
+        colorSupport && operatingMode === "SINGLE";
 
-        const selectedEffectIndex = _.findIndex(this.props.effects, ["data", this.props.selectedEffectId]);
+    const showEffectPicker =
+        operatingMode === "EXTERNAL";
 
-        return (
-            <BaseCard
-                title={this.props.name} >
+    const selectedEffectIndex = _.findIndex(effects, ["data", selectedEffectId]);
 
-                <KeyValueList
-                    data={[
-                        { key: "Type", value: this.props.type },
-                        { key: "Node ID", value: this.props.id },
-                        { key: "Light count", value: this.props.lightCount },
-                        { key: "Addressable", value: _.toString(this.props.addressable) },
-                        { key: "Color support", value: _.toString(this.props.colorSupport) }
-                    ]} />
-                <Divider />
+    return (
+        <BaseCard
+            title={name} >
 
-                <Row50>
-                    <div>Operating mode:</div>
+            <KeyValueList
+                data={[
+                    { key: "Type", value: type },
+                    { key: "Node ID", value: id },
+                    { key: "Light count", value: lightCount },
+                    { key: "Addressable", value: _.toString(addressable) },
+                    { key: "Color support", value: _.toString(colorSupport) }
+                ]} />
+            <Divider />
 
-                    <Dropdown
-                        data={MODES}
-                        selectedItemIndex={this.state.modeIndex}
-                        onChange={this.handleModeChange} />
-                </Row50>
+            <Row50>
+                <div>Operating mode:</div>
 
-                <Divider />
+                <Dropdown
+                    data={MODES}
+                    selectedItemIndex={modeIndex}
+                    onChange={handleModeChange} />
+            </Row50>
 
-                {showBrightness &&
-                    <React.Fragment>
-                        <CardAdjustmentRow>
-                            <div>Brightness:</div>
+            <Divider />
 
-                            <SliderAndInput
-                                minValue={MIN_VALUE}
-                                maxValue={MAX_VALUE}
-                                value={this.props.brightness}
-                                onChange={this.handleBrightnessChange} />
-                        </CardAdjustmentRow>
+            {showBrightness &&
+                <React.Fragment>
+                    <CardAdjustmentRow>
+                        <div>Brightness:</div>
 
-                        <Divider />
-                    </React.Fragment>
-                }
+                        <SliderAndInput
+                            minValue={MIN_VALUE}
+                            maxValue={MAX_VALUE}
+                            value={brightness}
+                            onChange={handleBrightnessChange} />
+                    </CardAdjustmentRow>
 
-                {showColor &&
-                    <React.Fragment>
-                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
-                            <NormalButton
-                                onClick={this.toggleColorPicker}
-                                style={{ width: '100%' }}>
-                                {this.state.useColorPicker ? "Switch to Manual Sliders" : "Switch to Color Picker"}
-                            </NormalButton>
-                        </div>
+                    <Divider />
+                </React.Fragment>
+            }
 
-                        {this.state.useColorPicker ? (
-                            <ColorWrapper
-                                r={this.props.red}
-                                g={this.props.green}
-                                b={this.props.blue}
-                                onChange={this.handleColorPickerChange}
-                            />
-                        ) : (
-                            <React.Fragment>
-                                <CardAdjustmentRow>
-                                    <div>Red:</div>
+            {showColor &&
+                <React.Fragment>
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                        <NormalButton
+                            onClick={toggleColorPicker}
+                            style={{ width: '100%' }}>
+                            {useColorPicker ? "Switch to Manual Sliders" : "Switch to Color Picker"}
+                        </NormalButton>
+                    </div>
 
-                                    <SliderAndInput
-                                        minValue={MIN_VALUE}
-                                        maxValue={MAX_VALUE}
-                                        value={this.props.red}
-                                        onChange={this.handleRedChange} />
-                                </CardAdjustmentRow>
-                                <CardAdjustmentRow>
-                                    <div>Green:</div>
+                    {useColorPicker ? (
+                        <ColorWrapper
+                            r={red}
+                            g={green}
+                            b={blue}
+                            onChange={handleColorPickerChange}
+                        />
+                    ) : (
+                        <React.Fragment>
+                            <CardAdjustmentRow>
+                                <div>Red:</div>
 
-                                    <SliderAndInput
-                                        minValue={MIN_VALUE}
-                                        maxValue={MAX_VALUE}
-                                        value={this.props.green}
-                                        onChange={this.handleGreenChange} />
-                                </CardAdjustmentRow>
-                                <CardAdjustmentRow>
-                                    <div>Blue:</div>
+                                <SliderAndInput
+                                    minValue={MIN_VALUE}
+                                    maxValue={MAX_VALUE}
+                                    value={red}
+                                    onChange={handleRedChange} />
+                            </CardAdjustmentRow>
+                            <CardAdjustmentRow>
+                                <div>Green:</div>
 
-                                    <SliderAndInput
-                                        minValue={MIN_VALUE}
-                                        maxValue={MAX_VALUE}
-                                        value={this.props.blue}
-                                        onChange={this.handleBlueChange} />
-                                </CardAdjustmentRow>
-                            </React.Fragment>
-                        )}
+                                <SliderAndInput
+                                    minValue={MIN_VALUE}
+                                    maxValue={MAX_VALUE}
+                                    value={green}
+                                    onChange={handleGreenChange} />
+                            </CardAdjustmentRow>
+                            <CardAdjustmentRow>
+                                <div>Blue:</div>
 
-                        <Divider />
-                    </React.Fragment>
-                }
+                                <SliderAndInput
+                                    minValue={MIN_VALUE}
+                                    maxValue={MAX_VALUE}
+                                    value={blue}
+                                    onChange={handleBlueChange} />
+                            </CardAdjustmentRow>
+                        </React.Fragment>
+                    )}
 
-                {showEffectPicker &&
-                    <React.Fragment>
-                        <Row50>
-                            <div>Effect:</div>
+                    <Divider />
+                </React.Fragment>
+            }
 
-                            <Dropdown
-                                data={this.props.effects}
-                                selectedItemIndex={selectedEffectIndex}
-                                onChange={this.handleEffectChange} />
-                        </Row50>
+            {showEffectPicker &&
+                <React.Fragment>
+                    <Row50>
+                        <div>Effect:</div>
 
-                        <Divider />
-                    </React.Fragment>
-                }
+                        <Dropdown
+                            data={effects}
+                            selectedItemIndex={selectedEffectIndex}
+                            onChange={handleEffectChange} />
+                    </Row50>
 
-                {this.props.operatingMode === "INDIVIDUAL" &&
-                    <NormalButton
-                        onClick={() => this.props.push("/nodes/" + this.props.id + "/lights")}>
-                        Lights
-                    </NormalButton>
-                }
-            </BaseCard>
-        );
-    }
+                    <Divider />
+                </React.Fragment>
+            }
+
+            {operatingMode === "INDIVIDUAL" &&
+                <NormalButton
+                    onClick={() => navigate("/nodes/" + id + "/lights")}>
+                    Lights
+                </NormalButton>
+            }
+        </BaseCard>
+    );
 }
 
 NodeCard.propTypes = {
@@ -248,37 +245,4 @@ NodeCard.defaultProps = {
     onEffectChange: _.noop
 };
 
-const mapStateToProps = (state, ownProps) => {
-    const id = ownProps.id;
-
-    return {
-        name: state.nodes[id].name,
-        type: state.nodes[id].type,
-        lightCount: state.nodes[id].features.count,
-        addressable: state.nodes[id].features.addressable,
-        colorSupport: state.nodes[id].features.color,
-        operatingMode: state.nodeValues[id].mode,
-        brightness: _.get(state.nodeValues[id], "brightness"),
-        red: _.get(state.nodeValues[id], "red"),
-        green: _.get(state.nodeValues[id], "green"),
-        blue: _.get(state.nodeValues[id], "blue"),
-        effects: _.map(state.effects.configuredEffects, effect => ({ data: effect.id, label: effect.name })),
-        selectedEffectId: state.effects.effectsInUsePerNode[id].effectId
-    };
-};
-
-const mapDispatchToProps = dispatch => ({
-    onModeChange: (nodeId, mode) => dispatch(changeNodeValues(nodeId, { mode })),
-    onBrightnessChange: (nodeId, brightness) => dispatch(changeNodeValues(nodeId, { brightness })),
-    onRedChange: (nodeId, red) => dispatch(changeNodeValues(nodeId, { red })),
-    onGreenChange: (nodeId, green) => dispatch(changeNodeValues(nodeId, { green })),
-    onBlueChange: (nodeId, blue) => dispatch(changeNodeValues(nodeId, { blue })),
-    onColorChange: (nodeId, color) => dispatch(changeNodeValues(nodeId, color)),
-    onEffectChange: (nodeId, effectId, nodeColorSupport) => dispatch(selectEffect(nodeId, effectId, nodeColorSupport)),
-    push: path => dispatch(push(path))
-});
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(NodeCard);
+export default NodeCard;

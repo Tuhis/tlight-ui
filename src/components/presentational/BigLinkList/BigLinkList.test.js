@@ -3,8 +3,10 @@ import { render, screen } from '@testing-library/react';
 import BigLinkList from './BigLinkList';
 
 // Mock ResizeSensor since it's used in componentDidMount
-jest.mock('css-element-queries', () => ({
-    ResizeSensor: jest.fn().mockImplementation((element, callback) => {
+import { vi } from 'vitest';
+
+vi.mock('css-element-queries', () => ({
+    ResizeSensor: vi.fn().mockImplementation(function (element, callback) {
         // We can simulate callback triggering if needed
         return {};
     })
@@ -12,8 +14,8 @@ jest.mock('css-element-queries', () => ({
 
 describe('BigLinkList', () => {
     const links = [
-        { text: 'Link 1', onClick: jest.fn(), testId: 'link-1' },
-        { text: 'Link 2', onClick: jest.fn(), testId: 'link-2' }
+        { text: 'Link 1', onClick: vi.fn(), testId: 'link-1' },
+        { text: 'Link 2', onClick: vi.fn(), testId: 'link-2' }
     ];
 
     it('should render full text when width is 0 (headless/test default)', () => {

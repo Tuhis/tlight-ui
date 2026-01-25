@@ -1,14 +1,13 @@
-import nodes from './nodes';
-import { NODES_RECEIVED } from '../actions/nodeActions';
+import nodesReducer, { nodesReceived } from './nodesSlice';
 
 describe('nodes reducer', () => {
     it('should return initial state when state is undefined', () => {
         const action = { type: 'UNKNOWN_ACTION' };
-        const result = nodes(undefined, action);
+        const result = nodesReducer(undefined, action);
         expect(result).toEqual({});
     });
 
-    it('should handle NODES_RECEIVED action', () => {
+    it('should handle nodesReceived action', () => {
         const mockNodes = [
             {
                 id: 'node-1',
@@ -24,12 +23,8 @@ describe('nodes reducer', () => {
             }
         ];
 
-        const action = {
-            type: NODES_RECEIVED,
-            payload: { nodes: mockNodes }
-        };
-
-        const result = nodes(undefined, action);
+        const action = nodesReceived({ nodes: mockNodes });
+        const result = nodesReducer(undefined, action);
 
         expect(result).toEqual({
             'node-1': mockNodes[0],
@@ -54,12 +49,8 @@ describe('nodes reducer', () => {
             }
         ];
 
-        const action = {
-            type: NODES_RECEIVED,
-            payload: { nodes: newNodes }
-        };
-
-        const result = nodes(initialState, action);
+        const action = nodesReceived({ nodes: newNodes });
+        const result = nodesReducer(initialState, action);
 
         expect(result).toEqual({
             'node-1': initialState['node-1'],
@@ -84,23 +75,15 @@ describe('nodes reducer', () => {
             }
         ];
 
-        const action = {
-            type: NODES_RECEIVED,
-            payload: { nodes: updatedNodes }
-        };
-
-        const result = nodes(initialState, action);
+        const action = nodesReceived({ nodes: updatedNodes });
+        const result = nodesReducer(initialState, action);
 
         expect(result['node-1'].name).toBe('New Name');
     });
 
     it('should handle empty nodes array', () => {
-        const action = {
-            type: NODES_RECEIVED,
-            payload: { nodes: [] }
-        };
-
-        const result = nodes(undefined, action);
+        const action = nodesReceived({ nodes: [] });
+        const result = nodesReducer(undefined, action);
 
         expect(result).toEqual({});
     });

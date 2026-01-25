@@ -1,61 +1,55 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { ConnectedRouter, connectRouter, routerMiddleware } from 'connected-react-router';
-import { createMemoryHistory } from 'history';
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { MemoryRouter } from 'react-router-dom';
+import { createStore, combineReducers } from 'redux';
 import App from './App';
 
 // Mock container components
-jest.mock('./components/container/NodeCardGrid/NodeCardGrid', () => () => <div data-testid="page-nodes">Node Page</div>);
-jest.mock('./components/container/EffectCardGrid/EffectCardGrid', () => () => <div data-testid="page-effects">Effect Page</div>);
-jest.mock('./components/container/LightCardGrid/LightCardGrid', () => () => <div data-testid="page-lights">Light Page</div>);
+import { vi } from 'vitest';
 
-// Helper to create a real store with routing support
-const createTestStore = (history, initialState = {}) => {
+vi.mock('./components/container/NodeCardGrid/NodeCardGrid', () => ({ default: () => <div data-testid="page-nodes">Node Page</div> }));
+vi.mock('./components/container/EffectCardGrid/EffectCardGrid', () => ({ default: () => <div data-testid="page-effects">Effect Page</div> }));
+vi.mock('./components/container/LightCardGrid/LightCardGrid', () => ({ default: () => <div data-testid="page-lights">Light Page</div> }));
+
+// Helper to create a real store without routing
+const createTestStore = (initialState = {}) => {
     const rootReducer = combineReducers({
-        router: connectRouter(history),
-        // Mock other reducers to return initial state
+        // Mock reducers to return initial state
         nodes: (state = initialState.nodes || {}) => state,
-        effects: (state = initialState.effects || { configuredEffects: {} }) => state,
+        effects: (state = initialState.effects || { configuredEffects: [] }) => state,
         nodeValues: (state = {}) => state,
         lightValues: (state = {}) => state,
     });
 
-    return createStore(
-        rootReducer,
-        applyMiddleware(routerMiddleware(history))
-    );
+    return createStore(rootReducer);
 };
 
 describe('App Routing Integration', () => {
 
     it('should redirect root / to /nodes', () => {
-        const history = createMemoryHistory({ initialEntries: ['/'] });
-        const store = createTestStore(history, {});
+        const store = createTestStore({});
 
         render(
             <Provider store={store}>
-                <ConnectedRouter history={history}>
+                <MemoryRouter initialEntries={['/']}>
                     <App />
-                </ConnectedRouter>
+                </MemoryRouter>
             </Provider>
         );
 
-        // Expect Redirect to /nodes
+        // Expect Nodes page to be visible (due to redirect)
         expect(screen.getByTestId('page-nodes')).toBeInTheDocument();
-        expect(history.location.pathname).toBe('/nodes');
     });
 
     it('should render Effects page on /effects', () => {
-        const history = createMemoryHistory({ initialEntries: ['/effects'] });
-        const store = createTestStore(history, {});
+        const store = createTestStore({});
 
         render(
             <Provider store={store}>
-                <ConnectedRouter history={history}>
+                <MemoryRouter initialEntries={['/effects']}>
                     <App />
-                </ConnectedRouter>
+                </MemoryRouter>
             </Provider>
         );
 
@@ -63,14 +57,13 @@ describe('App Routing Integration', () => {
     });
 
     it('should render Lights page on /nodes/:nodeId/lights', () => {
-        const history = createMemoryHistory({ initialEntries: ['/nodes/node-1/lights'] });
-        const store = createTestStore(history, {});
+        const store = createTestStore({});
 
         render(
             <Provider store={store}>
-                <ConnectedRouter history={history}>
+                <MemoryRouter initialEntries={['/nodes/node-1/lights']}>
                     <App />
-                </ConnectedRouter>
+                </MemoryRouter>
             </Provider>
         );
 

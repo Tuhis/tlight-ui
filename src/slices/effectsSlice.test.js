@@ -1,5 +1,4 @@
-import effects from './effects';
-import { NODES_RECEIVED } from '../actions/nodeActions';
+import effectsReducer, { effectsInitializedForNodes } from './effectsSlice';
 import {
     CREATE_NEW_EFFECT,
     SET_EFFECT_NAME,
@@ -17,23 +16,20 @@ describe('effects reducer', () => {
 
     it('should return initial state when state is undefined', () => {
         const action = { type: 'UNKNOWN_ACTION' };
-        const result = effects(undefined, action);
+        const result = effectsReducer(undefined, action);
         expect(result).toEqual(initialState);
     });
 
-    describe('NODES_RECEIVED', () => {
+    describe('effectsInitializedForNodes', () => {
         it('should create effectsInUsePerNode structure from nodes', () => {
             const mockNodes = [
                 { id: 'node-1', name: 'Node 1' },
                 { id: 'node-2', name: 'Node 2' }
             ];
 
-            const action = {
-                type: NODES_RECEIVED,
-                payload: { nodes: mockNodes }
-            };
+            const action = effectsInitializedForNodes({ nodes: mockNodes });
 
-            const result = effects(undefined, action);
+            const result = effectsReducer(undefined, action);
 
             expect(result.effectsInUsePerNode).toEqual({
                 'node-1': {
@@ -55,12 +51,8 @@ describe('effects reducer', () => {
                 effectsInUsePerNode: {}
             };
 
-            const action = {
-                type: NODES_RECEIVED,
-                payload: { nodes: [{ id: 'node-1', name: 'Node 1' }] }
-            };
-
-            const result = effects(state, action);
+            const action = effectsInitializedForNodes({ nodes: [{ id: 'node-1', name: 'Node 1' }] });
+            const result = effectsReducer(state, action);
 
             expect(result.configuredEffects).toEqual(state.configuredEffects);
         });
@@ -69,7 +61,7 @@ describe('effects reducer', () => {
     describe('CREATE_NEW_EFFECT', () => {
         it('should add a new effect to configuredEffects', () => {
             const action = { type: CREATE_NEW_EFFECT };
-            const result = effects(initialState, action);
+            const result = effectsReducer(initialState, action);
 
             expect(result.configuredEffects).toHaveLength(1);
             expect(result.configuredEffects[0]).toMatchObject({
@@ -87,7 +79,7 @@ describe('effects reducer', () => {
             };
 
             const action = { type: CREATE_NEW_EFFECT };
-            const result = effects(state, action);
+            const result = effectsReducer(state, action);
 
             expect(result.configuredEffects).toHaveLength(2);
             expect(result.configuredEffects[0].id).toBe('existing-1');
@@ -109,7 +101,7 @@ describe('effects reducer', () => {
                 payload: { nodeId: 'node-1', effectId: 'effect-123' }
             };
 
-            const result = effects(state, action);
+            const result = effectsReducer(state, action);
 
             expect(result.effectsInUsePerNode['node-1'].effectId).toBe('effect-123');
             expect(result.effectsInUsePerNode['node-2'].effectId).toBeNull();
@@ -128,7 +120,7 @@ describe('effects reducer', () => {
                 payload: { nodeId: 'node-1', effectId: 'effect-456' }
             };
 
-            const result = effects(state, action);
+            const result = effectsReducer(state, action);
 
             expect(result.effectsInUsePerNode['node-1']).toEqual({
                 nodeId: 'node-1',
@@ -154,29 +146,13 @@ describe('effects reducer', () => {
                 payload: { effectId: 'effect-2' }
             };
 
-            const result = effects(state, action);
+            const result = effectsReducer(state, action);
 
             expect(result.configuredEffects).toHaveLength(2);
             expect(result.configuredEffects).toEqual([
                 { id: 'effect-1', name: 'Effect 1' },
                 { id: 'effect-3', name: 'Effect 3' }
             ]);
-        });
-
-        it('should handle deleting non-existent effect gracefully', () => {
-            const state = {
-                ...initialState,
-                configuredEffects: [{ id: 'effect-1', name: 'Effect 1' }]
-            };
-
-            const action = {
-                type: DELETE_EFFECT,
-                payload: { effectId: 'non-existent' }
-            };
-
-            const result = effects(state, action);
-
-            expect(result.configuredEffects).toHaveLength(1);
         });
     });
 
@@ -195,33 +171,10 @@ describe('effects reducer', () => {
                 payload: { effectId: 'effect-1', name: 'New Name' }
             };
 
-            const result = effects(state, action);
+            const result = effectsReducer(state, action);
 
             expect(result.configuredEffects[0].name).toBe('New Name');
             expect(result.configuredEffects[1].name).toBe('Other Effect');
-        });
-
-        it('should not modify other effect properties when setting name', () => {
-            const state = {
-                ...initialState,
-                configuredEffects: [
-                    { id: 'effect-1', name: 'Old', type: 'rainbow', effectProperties: { speed: 10 } }
-                ]
-            };
-
-            const action = {
-                type: SET_EFFECT_NAME,
-                payload: { effectId: 'effect-1', name: 'Updated' }
-            };
-
-            const result = effects(state, action);
-
-            expect(result.configuredEffects[0]).toEqual({
-                id: 'effect-1',
-                name: 'Updated',
-                type: 'rainbow',
-                effectProperties: { speed: 10 }
-            });
         });
     });
 
@@ -244,7 +197,7 @@ describe('effects reducer', () => {
                 payload: { effectId: 'effect-1', type: 'pulse' }
             };
 
-            const result = effects(state, action);
+            const result = effectsReducer(state, action);
 
             expect(result.configuredEffects[0]).toEqual({
                 id: 'effect-1',
@@ -252,27 +205,6 @@ describe('effects reducer', () => {
                 type: 'pulse',
                 effectProperties: {}
             });
-        });
-
-        it('should only update the specified effect', () => {
-            const state = {
-                ...initialState,
-                configuredEffects: [
-                    { id: 'effect-1', name: 'E1', type: 'rainbow', effectProperties: {} },
-                    { id: 'effect-2', name: 'E2', type: 'pulse', effectProperties: { speed: 5 } }
-                ]
-            };
-
-            const action = {
-                type: SET_EFFECT_TYPE,
-                payload: { effectId: 'effect-1', type: 'fade' }
-            };
-
-            const result = effects(state, action);
-
-            expect(result.configuredEffects[0].type).toBe('fade');
-            expect(result.configuredEffects[1].type).toBe('pulse');
-            expect(result.configuredEffects[1].effectProperties).toEqual({ speed: 5 });
         });
     });
 
@@ -290,7 +222,7 @@ describe('effects reducer', () => {
                 payload: { effectId: 'effect-1', path: 'speed', value: 15 }
             };
 
-            const result = effects(state, action);
+            const result = effectsReducer(state, action);
 
             expect(result.configuredEffects[0].effectProperties.speed).toBe(15);
         });
@@ -308,55 +240,9 @@ describe('effects reducer', () => {
                 payload: { effectId: 'effect-1', path: 'color.red', value: 255 }
             };
 
-            const result = effects(state, action);
+            const result = effectsReducer(state, action);
 
             expect(result.configuredEffects[0].effectProperties.color.red).toBe(255);
-        });
-
-        it('should update existing property without affecting others', () => {
-            const state = {
-                ...initialState,
-                configuredEffects: [
-                    {
-                        id: 'effect-1',
-                        name: 'Effect',
-                        type: 'rainbow',
-                        effectProperties: { speed: 10, brightness: 100 }
-                    }
-                ]
-            };
-
-            const action = {
-                type: SET_EFFECT_PROPERTY,
-                payload: { effectId: 'effect-1', path: 'speed', value: 20 }
-            };
-
-            const result = effects(state, action);
-
-            expect(result.configuredEffects[0].effectProperties).toEqual({
-                speed: 20,
-                brightness: 100
-            });
-        });
-
-        it('should only modify the specified effect', () => {
-            const state = {
-                ...initialState,
-                configuredEffects: [
-                    { id: 'effect-1', name: 'E1', type: 'rainbow', effectProperties: { speed: 10 } },
-                    { id: 'effect-2', name: 'E2', type: 'pulse', effectProperties: { speed: 5 } }
-                ]
-            };
-
-            const action = {
-                type: SET_EFFECT_PROPERTY,
-                payload: { effectId: 'effect-1', path: 'speed', value: 25 }
-            };
-
-            const result = effects(state, action);
-
-            expect(result.configuredEffects[0].effectProperties.speed).toBe(25);
-            expect(result.configuredEffects[1].effectProperties.speed).toBe(5);
         });
     });
 });

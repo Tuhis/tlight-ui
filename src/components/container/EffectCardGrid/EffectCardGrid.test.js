@@ -5,9 +5,11 @@ import configureStore from 'redux-mock-store';
 import EffectCardGrid from './EffectCardGrid';
 import { createNewEffect } from '../../../actions/effectActions';
 
-jest.mock('../EffectCard/EffectCard', () => (props) => <div data-testid="effect-card" data-id={props.id}>EffectCard {props.id}</div>);
-jest.mock('../../presentational/AddNewCard/AddNewCard', () => (props) => <button data-testid="add-new-card" onClick={props.onClick}>Add New</button>);
-jest.mock('css-element-queries/src/ResizeSensor', () => jest.fn()); // Should mock nicely
+import { vi } from 'vitest';
+
+vi.mock('../EffectCard/EffectCard', () => ({ default: (props) => <div data-testid="effect-card" data-id={props.id}>EffectCard {props.id}</div> }));
+vi.mock('../../presentational/AddNewCard/AddNewCard', () => ({ default: (props) => <button data-testid="add-new-card" onClick={props.onClick}>Add New</button> }));
+vi.mock('css-element-queries/src/ResizeSensor', () => ({ default: vi.fn() })); // Should mock nicely
 
 // Fix: Jest mock for css-element-queries might fail if not careful with module resolution or requires. 
 // But EffectCardGrid imports it? 
@@ -25,10 +27,10 @@ describe('EffectCardGrid', () => {
     beforeEach(() => {
         store = mockStore({
             effects: {
-                configuredEffects: {
-                    'effect-1': { id: 'effect-1' },
-                    'effect-2': { id: 'effect-2' }
-                }
+                configuredEffects: [
+                    { id: 'effect-1', name: 'Effect 1' },
+                    { id: 'effect-2', name: 'Effect 2' }
+                ]
             }
         });
         store.dispatch = jest.fn();

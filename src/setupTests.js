@@ -1,12 +1,15 @@
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+
+window.jest = vi; // Shim jest for legacy tests if needed
 
 window.matchMedia = (query) => ({
     matches: true,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // Deprecated
-    removeListener: jest.fn(), // Deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // Deprecated
+    removeListener: vi.fn(), // Deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
 });

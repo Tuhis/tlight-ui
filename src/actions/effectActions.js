@@ -1,60 +1,35 @@
 import _ from "lodash";
+import {
+    effectCreated,
+    effectSelected,
+    effectNameSet,
+    effectTypeSet,
+    effectPropertySet,
+    effectDeleted
+} from '../slices/effectsSlice';
 
-export const CREATE_NEW_EFFECT = "CREATE_NEW_EFFECT";
-export const SET_EFFECT_NAME = "SET_EFFECT_NAME";
-export const SET_EFFECT_TYPE = "SET_EFFECT_TYPE";
-export const SET_EFFECT_PROPERTY = "SET_EFFECT_PROPERTY";
-export const SELECT_EFFECT = "SELECT_EFFECT";
-export const DELETE_EFFECT = "DELETE_EFFECT";
+// Export action creators from slice
+export const createNewEffect = effectCreated;
+export const selectEffectAC = (nodeId, effectId) => effectSelected({ nodeId, effectId });
+export const setEffectName = (id, name) => effectNameSet({ effectId: id, name });
+export const setEffectType = (id, type) => effectTypeSet({ effectId: id, type });
+export const setEffectProperty = (id, path, value) => effectPropertySet({ effectId: id, path, value });
+export const deleteEffect = (id) => effectDeleted({ effectId: id });
 
-export const createNewEffect = () => ({
-    type: CREATE_NEW_EFFECT
-});
-
-export const selectEffectAC = (nodeId, effectId) => ({
-    type: SELECT_EFFECT,
-    payload: {
-        nodeId: nodeId,
-        effectId: effectId
-    }
-});
-
-export const setEffectName = (id, name) => ({
-    type: SET_EFFECT_NAME,
-    payload: {
-        effectId: id,
-        name: name
-    }
-});
-
-export const setEffectType = (id, type) => ({
-    type: SET_EFFECT_TYPE,
-    payload: {
-        effectId: id,
-        type: type
-    }
-});
-
-export const setEffectProperty = (id, path, value) => ({
-    type: SET_EFFECT_PROPERTY,
-    payload: {
-        effectId: id,
-        path: path,
-        value: value
-    }
-});
-
-export const deleteEffect = (id) => ({
-    type: DELETE_EFFECT,
-    payload: {
-        effectId: id
-    }
-});
+// Export constants for compatibility
+export const CREATE_NEW_EFFECT = "effects/effectCreated";
+export const SET_EFFECT_NAME = "effects/effectNameSet";
+export const SET_EFFECT_TYPE = "effects/effectTypeSet";
+export const SET_EFFECT_PROPERTY = "effects/effectPropertySet";
+export const SELECT_EFFECT = "effects/effectSelected";
+export const DELETE_EFFECT = "effects/effectDeleted";
 
 export const selectEffect = (nodeId, effectId, color) => {
     return (dispatch, getState) => {
         const effectConfiguration = _.find(getState().effects.configuredEffects, ["id", effectId]);
-        const effectParams = effectConfiguration.effectProperties.effect;
+
+        // Deep clone to avoid mutating state
+        const effectParams = _.cloneDeep(effectConfiguration.effectProperties.effect);
 
         // Few hacks
         if (!_.isUndefined(color)) {
@@ -87,9 +62,9 @@ export const selectEffect = (nodeId, effectId, color) => {
                 }
             }
         })
-        .then(() => {
-            dispatch(selectEffectAC(nodeId, effectId));
-            console.log("Plugin setup!");
-        });
-    }
-}
+            .then(() => {
+                dispatch(selectEffectAC(nodeId, effectId));
+                console.log("Plugin setup!");
+            });
+    };
+};
