@@ -31,22 +31,26 @@ class App extends Component {
         const sidebarLinks = [
             {
                 text: "Nodes",
-                onClick: () => this.navigateTo("/nodes")
+                onClick: () => this.navigateTo("/nodes"),
+                testId: "nav-nodes"
             },
             {
                 text: "Effects",
-                onClick: () => this.navigateTo("/effects")
+                onClick: () => this.navigateTo("/effects"),
+                testId: "nav-effects"
             },
             {
                 text: "Groups",
-                onClick: () => this.navigateTo("/groups")
+                onClick: () => this.navigateTo("/groups"),
+                testId: "nav-groups"
             },
             {
                 text: "Reset",
                 onClick: () => {
                     localStorage.clear();
                     document.location.reload();
-                }
+                },
+                testId: "nav-reset"
             }
         ];
 
@@ -67,9 +71,9 @@ class App extends Component {
                     <Topbar>
                         {narrowViewport &&
                             <Centerizer vertical>
-                            <FullscreenMenu>
-                                <BigLinkList links={sidebarLinks}/>
-                            </FullscreenMenu>
+                                <FullscreenMenu>
+                                    <BigLinkList links={sidebarLinks} />
+                                </FullscreenMenu>
                             </Centerizer>
                         }
                         <Breadcrumbs path={this.props.breadcrumbPath} />

@@ -22,6 +22,7 @@ const NormalButton = props => {
         <button
             type={"button"}
             className={className}
+            style={props.style}
             onClick={onClick}>
 
             {props.children}

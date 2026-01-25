@@ -31,14 +31,17 @@ class BigLinkList extends React.Component {
             let linkText;
 
             if (this.props.cutTextsOnNarrowList)
-                linkText = this.ref.current.clientWidth > 100 ? link.text : link.text.substring(0,1);
+                // If clientWidth is 0, assume it's not yet layouted/headless and show full text
+                linkText = (this.ref.current.clientWidth > 100 || this.ref.current.clientWidth === 0) ? link.text : link.text.substring(0, 1);
             else
                 linkText = link.text;
 
             return (
                 <div
                     key={link.text}
-                    onClick={link.onClick} >
+                    onClick={link.onClick}
+                    data-testid={link.linkTestId || link.testId} // Support both prop names if needed
+                >
 
                     <div className={`${styles["link-text"]} ${this.props.rotateTextsOnNarrowList ? styles["rotate"] : ""}`}>
                         {linkText}
@@ -49,7 +52,7 @@ class BigLinkList extends React.Component {
             )
         });
 
-        links.unshift((<Divider key={"first-divider"}/>));
+        links.unshift((<Divider key={"first-divider"} />));
 
         return links;
     }

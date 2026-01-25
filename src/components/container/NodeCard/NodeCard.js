@@ -18,6 +18,7 @@ import { MODES, CONTROLLABLE_MODES } from "../../../constants/nodeOperatingModes
 import { MIN_VALUE, MAX_VALUE } from "../../../constants/generic";
 import NormalButton from "../../presentational/NormalButton/NormalButton";
 import { selectEffect } from "../../../actions/effectActions";
+import ColorWrapper from "../../presentational/ColorWrapper/ColorWrapper";
 
 class NodeCard extends React.Component {
 
@@ -25,7 +26,8 @@ class NodeCard extends React.Component {
         super(props);
 
         this.state = {
-            modeIndex: _.findIndex(MODES, ['data', this.props.operatingMode]) // What if mismatch?
+            modeIndex: _.findIndex(MODES, ['data', this.props.operatingMode]), // What if mismatch?
+            useColorPicker: true
         }
 
         this.handleModeChange = this.handleModeChange.bind(this);
@@ -33,6 +35,8 @@ class NodeCard extends React.Component {
         this.handleRedChange = this.handleRedChange.bind(this);
         this.handleGreenChange = this.handleGreenChange.bind(this);
         this.handleBlueChange = this.handleBlueChange.bind(this);
+        this.handleColorPickerChange = this.handleColorPickerChange.bind(this);
+        this.toggleColorPicker = this.toggleColorPicker.bind(this);
     }
 
     handleModeChange(item, modeIndex) {
@@ -62,6 +66,20 @@ class NodeCard extends React.Component {
 
     handleBlueChange({ value }) {
         this.props.onBlueChange(this.props.id, value);
+    }
+
+    handleColorPickerChange({ r, g, b }) {
+        this.props.onColorChange(this.props.id, {
+            red: r,
+            green: g,
+            blue: b
+        });
+    }
+
+    toggleColorPicker() {
+        this.setState({
+            useColorPicker: !this.state.useColorPicker
+        });
     }
 
     render() {
@@ -120,33 +138,52 @@ class NodeCard extends React.Component {
 
                 {showColor &&
                     <React.Fragment>
-                        <CardAdjustmentRow>
-                            <div>Red:</div>
+                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                            <NormalButton
+                                onClick={this.toggleColorPicker}
+                                style={{ width: '100%' }}>
+                                {this.state.useColorPicker ? "Switch to Manual Sliders" : "Switch to Color Picker"}
+                            </NormalButton>
+                        </div>
 
-                            <SliderAndInput
-                                minValue={MIN_VALUE}
-                                maxValue={MAX_VALUE}
-                                value={this.props.red}
-                                onChange={this.handleRedChange} />
-                        </CardAdjustmentRow>
-                        <CardAdjustmentRow>
-                            <div>Green:</div>
+                        {this.state.useColorPicker ? (
+                            <ColorWrapper
+                                r={this.props.red}
+                                g={this.props.green}
+                                b={this.props.blue}
+                                onChange={this.handleColorPickerChange}
+                            />
+                        ) : (
+                            <React.Fragment>
+                                <CardAdjustmentRow>
+                                    <div>Red:</div>
 
-                            <SliderAndInput
-                                minValue={MIN_VALUE}
-                                maxValue={MAX_VALUE}
-                                value={this.props.green}
-                                onChange={this.handleGreenChange} />
-                        </CardAdjustmentRow>
-                        <CardAdjustmentRow>
-                            <div>Blue:</div>
+                                    <SliderAndInput
+                                        minValue={MIN_VALUE}
+                                        maxValue={MAX_VALUE}
+                                        value={this.props.red}
+                                        onChange={this.handleRedChange} />
+                                </CardAdjustmentRow>
+                                <CardAdjustmentRow>
+                                    <div>Green:</div>
 
-                            <SliderAndInput
-                                minValue={MIN_VALUE}
-                                maxValue={MAX_VALUE}
-                                value={this.props.blue}
-                                onChange={this.handleBlueChange} />
-                        </CardAdjustmentRow>
+                                    <SliderAndInput
+                                        minValue={MIN_VALUE}
+                                        maxValue={MAX_VALUE}
+                                        value={this.props.green}
+                                        onChange={this.handleGreenChange} />
+                                </CardAdjustmentRow>
+                                <CardAdjustmentRow>
+                                    <div>Blue:</div>
+
+                                    <SliderAndInput
+                                        minValue={MIN_VALUE}
+                                        maxValue={MAX_VALUE}
+                                        value={this.props.blue}
+                                        onChange={this.handleBlueChange} />
+                                </CardAdjustmentRow>
+                            </React.Fragment>
+                        )}
 
                         <Divider />
                     </React.Fragment>
@@ -167,10 +204,12 @@ class NodeCard extends React.Component {
                     </React.Fragment>
                 }
 
-                <NormalButton
-                    onClick={() => this.props.push("/nodes/" + this.props.id + "/lights")}>
-                    Lights
-                </NormalButton>
+                {this.props.operatingMode === "INDIVIDUAL" &&
+                    <NormalButton
+                        onClick={() => this.props.push("/nodes/" + this.props.id + "/lights")}>
+                        Lights
+                    </NormalButton>
+                }
             </BaseCard>
         );
     }
@@ -195,6 +234,7 @@ NodeCard.propTypes = {
     onRedChange: PropTypes.func.isRequired,
     onGreenChange: PropTypes.func.isRequired,
     onBlueChange: PropTypes.func.isRequired,
+    onColorChange: PropTypes.func.isRequired,
     onEffectChange: PropTypes.func.isRequired
 };
 
@@ -204,6 +244,7 @@ NodeCard.defaultProps = {
     onRedChange: _.noop,
     onGreenChange: _.noop,
     onBlueChange: _.noop,
+    onColorChange: _.noop,
     onEffectChange: _.noop
 };
 
@@ -232,6 +273,7 @@ const mapDispatchToProps = dispatch => ({
     onRedChange: (nodeId, red) => dispatch(changeNodeValues(nodeId, { red })),
     onGreenChange: (nodeId, green) => dispatch(changeNodeValues(nodeId, { green })),
     onBlueChange: (nodeId, blue) => dispatch(changeNodeValues(nodeId, { blue })),
+    onColorChange: (nodeId, color) => dispatch(changeNodeValues(nodeId, color)),
     onEffectChange: (nodeId, effectId, nodeColorSupport) => dispatch(selectEffect(nodeId, effectId, nodeColorSupport)),
     push: path => dispatch(push(path))
 });

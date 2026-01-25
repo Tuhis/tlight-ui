@@ -13,19 +13,27 @@ import SliderAndInput from "../../presentational/SliderAndInput/SliderAndInput";
 
 import { changeNodeValues } from "../../../actions/nodeActions";
 
+import NormalButton from "../../presentational/NormalButton/NormalButton";
 import { MODES, CONTROLLABLE_MODES } from "../../../constants/nodeOperatingModes";
 import { MIN_VALUE, MAX_VALUE } from "../../../constants/generic";
 import { changeLightValues } from "../../../actions/lightActions";
+import ColorWrapper from "../../presentational/ColorWrapper/ColorWrapper";
 
 class LightCard extends React.Component {
 
     constructor(props) {
         super(props);
 
+        this.state = {
+            useColorPicker: true
+        };
+
         this.handleBrightnessChange = this.handleBrightnessChange.bind(this);
         this.handleRedChange = this.handleRedChange.bind(this);
         this.handleGreenChange = this.handleGreenChange.bind(this);
         this.handleBlueChange = this.handleBlueChange.bind(this);
+        this.handleColorPickerChange = this.handleColorPickerChange.bind(this);
+        this.toggleColorPicker = this.toggleColorPicker.bind(this);
     }
 
     handleBrightnessChange({ value }) {
@@ -56,6 +64,34 @@ class LightCard extends React.Component {
         });
     }
 
+    handleColorPickerChange({ r, g, b }) {
+        // We can dispatch individual changes or a single batch if backend supported it.
+        // For now, let's just trigger one by one or maybe we should have a bulk update action?
+        // The current actions seem to handle one prop at a time or object merge.
+        // Let's check handleRedChange: onRedChange(..., {red, green, blue}).
+        // Ideally we should have an action that updates all 3.
+        // changeLightValues takes payload.
+
+        // Dispatching for all 3:
+        // Actually onRedChange does: dispatch(changeLightValues(..., color))
+        // So we can just call any of them or dispatch directly if we had access.
+        // Since we only have props mapped:
+        // We can reuse onRedChange which actually accepts a full color object as the 3rd arg!
+        // Look at mapDispatchToProps: onRedChange: (nodeId, lightId, color) => dispatch(changeLightValues(nodeId, lightId, color)),
+
+        this.props.onRedChange(this.props.nodeId, this.props.id, {
+            red: r,
+            green: g,
+            blue: b
+        });
+    }
+
+    toggleColorPicker() {
+        this.setState({
+            useColorPicker: !this.state.useColorPicker
+        });
+    }
+
     render() {
         return (
             <BaseCard
@@ -76,33 +112,52 @@ class LightCard extends React.Component {
 
                 {this.props.colorSupport &&
                     <React.Fragment>
-                        <CardAdjustmentRow>
-                            <div>Red:</div>
+                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                            <NormalButton
+                                onClick={this.toggleColorPicker}
+                                style={{ width: '100%' }}>
+                                {this.state.useColorPicker ? "Switch to Manual Sliders" : "Switch to Color Picker"}
+                            </NormalButton>
+                        </div>
 
-                            <SliderAndInput
-                                minValue={MIN_VALUE}
-                                maxValue={MAX_VALUE}
-                                value={this.props.red}
-                                onChange={this.handleRedChange} />
-                        </CardAdjustmentRow>
-                        <CardAdjustmentRow>
-                            <div>Green:</div>
+                        {this.state.useColorPicker ? (
+                            <ColorWrapper
+                                r={this.props.red}
+                                g={this.props.green}
+                                b={this.props.blue}
+                                onChange={this.handleColorPickerChange}
+                            />
+                        ) : (
+                            <React.Fragment>
+                                <CardAdjustmentRow>
+                                    <div>Red:</div>
 
-                            <SliderAndInput
-                                minValue={MIN_VALUE}
-                                maxValue={MAX_VALUE}
-                                value={this.props.green}
-                                onChange={this.handleGreenChange} />
-                        </CardAdjustmentRow>
-                        <CardAdjustmentRow>
-                            <div>Blue:</div>
+                                    <SliderAndInput
+                                        minValue={MIN_VALUE}
+                                        maxValue={MAX_VALUE}
+                                        value={this.props.red}
+                                        onChange={this.handleRedChange} />
+                                </CardAdjustmentRow>
+                                <CardAdjustmentRow>
+                                    <div>Green:</div>
 
-                            <SliderAndInput
-                                minValue={MIN_VALUE}
-                                maxValue={MAX_VALUE}
-                                value={this.props.blue}
-                                onChange={this.handleBlueChange} />
-                        </CardAdjustmentRow>
+                                    <SliderAndInput
+                                        minValue={MIN_VALUE}
+                                        maxValue={MAX_VALUE}
+                                        value={this.props.green}
+                                        onChange={this.handleGreenChange} />
+                                </CardAdjustmentRow>
+                                <CardAdjustmentRow>
+                                    <div>Blue:</div>
+
+                                    <SliderAndInput
+                                        minValue={MIN_VALUE}
+                                        maxValue={MAX_VALUE}
+                                        value={this.props.blue}
+                                        onChange={this.handleBlueChange} />
+                                </CardAdjustmentRow>
+                            </React.Fragment>
+                        )}
 
                         <Divider />
                     </React.Fragment>

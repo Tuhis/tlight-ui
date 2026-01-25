@@ -1,0 +1,22 @@
+.minimal-color-picker :global(.chrome-picker)>div:nth-child(2)>div:nth-child(2) {
+    display: none !important;
+}
+
+
+/* Restore padding to body to give space for sliders */
+.minimal-color-picker :global(.chrome-picker)>div:nth-child(2) {
+    padding: 10px !important;
+}
+
+/* Force height on the sliders container (first child of body) */
+.minimal-color-picker :global(.chrome-picker)>div:nth-child(2)>div:first-child {
+    min-height: 12px !important;
+    display: block !important;
+}
+
+/* Force Hue Slider visibility */
+.minimal-color-picker :global(.hue-horizontal) {
+    height: 10px !important;
+    display: block !important;
+    border-radius: 2px;
+}

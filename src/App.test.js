@@ -1,9 +1,31 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import { createMemoryHistory } from 'history';
+import { ConnectedRouter, routerMiddleware } from 'connected-react-router';
 import App from './App';
+import createRootReducer from './reducer';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
+// Simple smoke test for the App component
+describe('App', () => {
+  it('should render without crashing', () => {
+    const history = createMemoryHistory();
+    const store = createStore(
+      createRootReducer(history),
+      applyMiddleware(routerMiddleware(history), thunk)
+    );
+
+    const { container } = render(
+      <Provider store={store}>
+        <ConnectedRouter history={history}>
+          <App />
+        </ConnectedRouter>
+      </Provider>
+    );
+
+    // Just verify the component renders something
+    expect(container).toBeInTheDocument();
+  });
 });
