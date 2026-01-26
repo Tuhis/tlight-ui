@@ -1,7 +1,7 @@
 import _ from "lodash";
 
 const defaultOptions = {
-    baseUrl: "http://localhost:3001/v1"
+    baseUrl: `http://${typeof window !== 'undefined' ? window.location.hostname : 'localhost'}:3001/v1`
 };
 
 export const createTlightApiMiddleware = (options = defaultOptions) => {

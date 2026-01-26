@@ -1,32 +1,32 @@
 import _ from "lodash";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import BaseCard from "../../presentational/BaseCard/BaseCard";
 import CardAdjustmentRow from "../../presentational/CardAdjustmentRow/CardAdjustmentRow";
 import Divider from "../../presentational/Divider/Divider";
-import Dropdown from "../../presentational/Dropdown/Dropdown";
-import KeyValueList from "../../presentational/KeyValueList/KeyValueList";
-import Row50 from "../../presentational/Row50/Row50";
 import SliderAndInput from "../../presentational/SliderAndInput/SliderAndInput";
 
-import { changeNodeValues } from "../../../actions/nodeActions";
+import { setCardPreference } from "../../../slices/uiSlice";
 
 import NormalButton from "../../presentational/NormalButton/NormalButton";
-import { MODES, CONTROLLABLE_MODES } from "../../../constants/nodeOperatingModes";
 import { MIN_VALUE, MAX_VALUE } from "../../../constants/generic";
 import { changeLightValues } from "../../../actions/lightActions";
 import ColorWrapper from "../../presentational/ColorWrapper/ColorWrapper";
 
 function LightCard({ id, nodeId }) {
     const dispatch = useDispatch();
-    const [useColorPicker, setUseColorPicker] = useState(true);
+    const uniqueId = `${nodeId}_${id}`;
+
+    // UI Local State from Redux
+    const useColorPicker = useSelector(state =>
+        (state.ui.preferences[uniqueId] && state.ui.preferences[uniqueId].useColorPicker) ?? true
+    );
 
     const lightValue = useSelector(state => state.lightValues[nodeId][id]);
     const colorSupport = useSelector(state => state.nodes[nodeId].features.color);
 
-    const type = lightValue.type;
     const brightness = _.get(lightValue, "brightness");
     const red = _.get(lightValue, "red");
     const green = _.get(lightValue, "green");
@@ -69,7 +69,11 @@ function LightCard({ id, nodeId }) {
     };
 
     const toggleColorPicker = () => {
-        setUseColorPicker(!useColorPicker);
+        dispatch(setCardPreference({
+            id: uniqueId,
+            key: 'useColorPicker',
+            value: !useColorPicker
+        }));
     };
 
     return (
@@ -147,24 +151,7 @@ function LightCard({ id, nodeId }) {
 
 LightCard.propTypes = {
     id: PropTypes.string.isRequired,
-    nodeId: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    brightness: PropTypes.number,
-    red: PropTypes.number,
-    green: PropTypes.number,
-    blue: PropTypes.number,
-    colorSupport: PropTypes.bool.isRequired,
-    onBrightnessChange: PropTypes.func.isRequired,
-    onRedChange: PropTypes.func.isRequired,
-    onGreenChange: PropTypes.func.isRequired,
-    onBlueChange: PropTypes.func.isRequired
-};
-
-LightCard.defaultProps = {
-    onBrightnessChange: _.noop,
-    onRedChange: _.noop,
-    onGreenChange: _.noop,
-    onBlueChange: _.noop
+    nodeId: PropTypes.string.isRequired
 };
 
 export default LightCard;

@@ -7,6 +7,7 @@ import nodesReducer from './slices/nodesSlice';
 import nodeValuesReducer from './slices/nodeValuesSlice';
 import lightValuesReducer from './slices/lightValuesSlice';
 import effectsReducer from './slices/effectsSlice';
+import uiReducer from './slices/uiSlice';
 
 import { createTlightApiMiddleware } from './middleware/tlightApiMiddleware';
 import { loadNodeData } from './actions/nodeActions';
@@ -25,7 +26,8 @@ export const store = configureStore({
         nodes: nodesReducer,
         nodeValues: nodeValuesReducer,
         lightValues: lightValuesReducer,
-        effects: effectsReducer
+        effects: effectsReducer,
+        ui: uiReducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()

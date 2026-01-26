@@ -85,7 +85,8 @@ test.describe('App Load and Navigation', () => {
         await page.goto('/nodes', { waitUntil: 'networkidle' });
 
         // Wait for breadcrumbs to render
-        const breadcrumb = page.locator('[class*="Breadcrumbs_breadcrumbs"] p');
+        // Wait for breadcrumbs to render
+        const breadcrumb = page.getByTestId('breadcrumbs');
         await expect(breadcrumb).toContainText('Nodes', { timeout: 10000 });
     });
 

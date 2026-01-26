@@ -24,13 +24,13 @@ describe('NodeCardGrid', () => {
                     id: 'node-1',
                     name: 'Node 1',
                     type: 'mock',
-                    features: { count: 10, addressable: true, color: true }
+                    features: { lightCount: 10, addressable: true, color: true }
                 },
                 'node-2': {
                     id: 'node-2',
                     name: 'Node 2',
                     type: 'mock',
-                    features: { count: 5, addressable: false, color: false }
+                    features: { lightCount: 5, addressable: false, color: false }
                 }
             },
             nodeValues: {

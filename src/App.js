@@ -1,6 +1,8 @@
 import _ from "lodash";
 import React from 'react';
+import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { setMobileMenuOpen, toggleMobileMenu } from "./slices/uiSlice";
 import { Sidebar } from "./components/presentational/Sidebar/Sidebar";
 import './App.css';
 import Topbar from './components/presentational/Topbar/Topbar';
@@ -16,6 +18,10 @@ import { Centerizer } from "./components/presentational/Centerizer/Centerizer";
 function App() {
     const location = useLocation();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    // UI State from Redux
+    const mobileMenuOpen = useSelector(state => state.ui.global.mobileMenuOpen);
 
     const breadcrumbPath = _.chain(location.pathname)
         .split("/")
@@ -25,6 +31,17 @@ function App() {
 
     const navigateTo = (path) => {
         navigate(path);
+        // Auto-close menu on navigation (optional better UX)
+        dispatch(setMobileMenuOpen(false));
+    };
+
+    const toggleMenu = (isOpen) => {
+        // If specific bool passed, use it, otherwise toggle
+        if (typeof isOpen === 'boolean') {
+            dispatch(setMobileMenuOpen(isOpen));
+        } else {
+            dispatch(toggleMobileMenu());
+        }
     };
 
     const sidebarLinks = [
@@ -70,7 +87,9 @@ function App() {
                 <Topbar>
                     {narrowViewport &&
                         <Centerizer vertical>
-                            <FullscreenMenu>
+                            <FullscreenMenu
+                                open={mobileMenuOpen}
+                                onToggle={toggleMenu}>
                                 <BigLinkList links={sidebarLinks} />
                             </FullscreenMenu>
                         </Centerizer>

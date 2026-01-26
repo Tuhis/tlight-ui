@@ -10,6 +10,7 @@ import nodesReducer from './slices/nodesSlice';
 import nodeValuesReducer from './slices/nodeValuesSlice';
 import lightValuesReducer from './slices/lightValuesSlice';
 import effectsReducer from './slices/effectsSlice';
+import uiReducer from './slices/uiSlice';
 
 // Simple smoke test for the App component
 describe('App', () => {
@@ -19,7 +20,8 @@ describe('App', () => {
         nodes: nodesReducer,
         nodeValues: nodeValuesReducer,
         lightValues: lightValuesReducer,
-        effects: effectsReducer
+        effects: effectsReducer,
+        ui: uiReducer
       }
     });
 

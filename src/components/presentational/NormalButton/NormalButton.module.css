@@ -1,17 +1,32 @@
 .normal-button {
     display: block;
-    background-color: #009de0;
+    background-color: #0d2a35;
     padding: 4px 4px;
-    border-width: 0;
+    border: 1px solid #00F0FF;
     font-size: 16pt;
     font-family: agency-fb, sans-serif;
     font-weight: 400;
     font-style: normal;
-    color: white;
+    color: #00F0FF;
     width: 100px;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.normal-button:hover {
+    box-shadow: 0 0 5px rgba(0, 240, 255, 0.4);
+    background-color: #123542;
+    text-shadow: 0 0 2px rgba(0, 240, 255, 0.5);
 }
 
 .cancel-button {
-    background-color: #8B3C54;
+    background-color: #4a1e2b;
+    border-color: #ff3366;
+    color: #ff3366;
+}
+
+.cancel-button:hover {
+    box-shadow: 0 0 5px rgba(255, 51, 102, 0.4);
+    background-color: #5c2635;
+    text-shadow: 0 0 2px rgba(255, 51, 102, 0.5);
 }

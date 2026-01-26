@@ -17,9 +17,14 @@ export default defineConfig({
     server: {
         port: 3000,
         open: true,
+        host: true,
+    },
+    css: {
+        devSourcemap: true,
     },
     build: {
         outDir: 'build',
+        sourcemap: true,
     },
     test: {
         globals: true,

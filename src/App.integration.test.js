@@ -20,6 +20,7 @@ const createTestStore = (initialState = {}) => {
         effects: (state = initialState.effects || { configuredEffects: [] }) => state,
         nodeValues: (state = {}) => state,
         lightValues: (state = {}) => state,
+        ui: (state = initialState.ui || { global: { mobileMenuOpen: false } }) => state,
     });
 
     return createStore(rootReducer);

@@ -1,6 +1,6 @@
 import _ from "lodash";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -13,6 +13,7 @@ import Row50 from "../../presentational/Row50/Row50";
 import SliderAndInput from "../../presentational/SliderAndInput/SliderAndInput";
 
 import { changeNodeValues } from "../../../actions/nodeActions";
+import { setCardPreference } from "../../../slices/uiSlice";
 
 import { MODES, CONTROLLABLE_MODES } from "../../../constants/nodeOperatingModes";
 import { MIN_VALUE, MAX_VALUE } from "../../../constants/generic";
@@ -29,9 +30,14 @@ function NodeCard({ id }) {
     const effects = useSelector(state => _.map(state.effects.configuredEffects, effect => ({ data: effect.id, label: effect.name })));
     const selectedEffectId = useSelector(state => state.effects.effectsInUsePerNode[id].effectId);
 
+    // UI Local State from Redux
+    const useColorPicker = useSelector(state =>
+        (state.ui.preferences[id] && state.ui.preferences[id].useColorPicker) ?? true
+    );
+
     const name = node.name;
     const type = node.type;
-    const lightCount = node.features.count;
+    const lightCount = node.features.lightCount;
     const addressable = node.features.addressable;
     const colorSupport = node.features.color;
     const operatingMode = nodeValue.mode;
@@ -40,15 +46,22 @@ function NodeCard({ id }) {
     const green = _.get(nodeValue, "green");
     const blue = _.get(nodeValue, "blue");
 
-    const [modeIndex, setModeIndex] = useState(_.findIndex(MODES, ['data', operatingMode]));
-    const [useColorPicker, setUseColorPicker] = useState(true);
+    // Derived state, no need for useState + useEffect sync madness
+    const animatable = node.features.animatable;
+    const availableModes = _.filter(MODES, m => {
+        if (m.data === "SINGLE" || m.data === "EXTERNAL") return true;
+        if (m.data === "INDIVIDUAL" && addressable) return true;
+        if (m.data === "ANIMATION" && animatable) return true;
+        return false;
+    });
 
-    const handleModeChange = (item, newModeIndex) => {
-        setModeIndex(newModeIndex);
+    const modeIndex = _.findIndex(availableModes, ['data', operatingMode]);
+
+    const handleModeChange = (item) => {
         dispatch(changeNodeValues(id, { mode: item.data }));
     };
 
-    const handleEffectChange = (item, itemIndex) => {
+    const handleEffectChange = (item) => {
         dispatch(selectEffect(id, item.data, colorSupport));
     };
 
@@ -77,10 +90,12 @@ function NodeCard({ id }) {
     };
 
     const toggleColorPicker = () => {
-        setUseColorPicker(!useColorPicker);
+        dispatch(setCardPreference({
+            id,
+            key: 'useColorPicker',
+            value: !useColorPicker
+        }));
     };
-
-    console.log({ id, name, operatingMode });
 
     const showBrightness =
         !_.isUndefined(brightness) && _.includes(CONTROLLABLE_MODES, operatingMode);
@@ -111,7 +126,7 @@ function NodeCard({ id }) {
                 <div>Operating mode:</div>
 
                 <Dropdown
-                    data={MODES}
+                    data={availableModes}
                     selectedItemIndex={modeIndex}
                     onChange={handleModeChange} />
             </Row50>
@@ -213,36 +228,7 @@ function NodeCard({ id }) {
 }
 
 NodeCard.propTypes = {
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    lightCount: PropTypes.number.isRequired,
-    addressable: PropTypes.bool.isRequired,
-    colorSupport: PropTypes.bool.isRequired,
-    operatingMode: PropTypes.string.isRequired,
-    brightness: PropTypes.number,
-    red: PropTypes.number,
-    green: PropTypes.number,
-    blue: PropTypes.number,
-    effects: PropTypes.arrayOf(PropTypes.object).isRequired,
-    selectedEffectId: PropTypes.string,
-    onModeChange: PropTypes.func.isRequired,
-    onBrightnessChange: PropTypes.func.isRequired,
-    onRedChange: PropTypes.func.isRequired,
-    onGreenChange: PropTypes.func.isRequired,
-    onBlueChange: PropTypes.func.isRequired,
-    onColorChange: PropTypes.func.isRequired,
-    onEffectChange: PropTypes.func.isRequired
-};
-
-NodeCard.defaultProps = {
-    onModeChange: _.noop,
-    onBrightnessChange: _.noop,
-    onRedChange: _.noop,
-    onGreenChange: _.noop,
-    onBlueChange: _.noop,
-    onColorChange: _.noop,
-    onEffectChange: _.noop
+    id: PropTypes.string.isRequired
 };
 
 export default NodeCard;

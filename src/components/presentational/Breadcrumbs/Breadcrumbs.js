@@ -2,7 +2,7 @@ import React from "react";
 import _ from "lodash";
 import styles from "./Breadcrumbs.module.css";
 
-const Breadcrumbs = ({path}) => {
+const Breadcrumbs = ({ path }) => {
 
     const getPathString = () => {
         let pathString = "";
@@ -20,7 +20,7 @@ const Breadcrumbs = ({path}) => {
     }
 
     return (
-        <div className={styles.breadcrumbs}>
+        <div className={styles.breadcrumbs} data-testid="breadcrumbs">
             <p>{getPathString()}</p>
         </div>
     );
