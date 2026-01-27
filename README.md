@@ -3,50 +3,105 @@
 ![Pipeline Status](https://github.com/Tuhis/tlight-ui/actions/workflows/pipeline.yml/badge.svg)
 <!-- COVERAGE_BADGE -->
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, dynamic web interface for controlling the **tlight** lighting system. Built with React, Vite, and Redux, this application allows users to manage lighting nodes, configure effects, and orchestrate light shows with a premium user experience.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+*   **Node Management**: Discover and control lighting nodes on your network.
+*   **Effect Configuration**: Apply and customize dynamic effects like *SmoothColors*, *Solid*, and more.
+*   **Interactive UI**: Responsive design with rich hover effects and fluid animations.
+*   **Real-time Updates**: Instant feedback on lighting state changes.
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+*   **Core**: React 19, Redux Toolkit
+*   **Build Tool**: Vite
+*   **Styling**: Vanilla CSS / CSS Variables for theming
+*   **Testing**: Vitest (Unit/Integration), Playwright (E2E)
+*   **Containerization**: Docker (Nginx serving production build)
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+## Prerequisites
 
-### `npm test`
+*   **Node.js**: v20 or higher
+*   **npm**: v10 or higher
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/Tuhis/tlight-ui.git
+    cd tlight-ui
+    ```
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2.  **Install dependencies**:
+    ```bash
+    npm ci
+    ```
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+3.  **Start the development server**:
+    ```bash
+    npm start
+    ```
+    The application will run at [http://localhost:3000](http://localhost:3000).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Testing
 
-### `npm run eject`
+This project uses a comprehensive testing strategy with **Vitest** for unit/integration tests and **Playwright** for end-to-end testing.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Unit & Integration Tests
+Run the test suite in watch mode:
+```bash
+npm test
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Generate a coverage report:
+```bash
+npm run test:coverage
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### End-to-End (E2E) Tests
+Run the Playwright test suite (headless):
+```bash
+npm run test:e2e
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Run E2E tests with UI runner:
+```bash
+npm run test:e2e:ui
+```
 
-## Learn More
+## Building for Production
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+To create a production-ready build:
+```bash
+npm run build
+```
+The output will be in the `build/` directory.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Docker Build
+The project includes a multi-stage Dockerfile that builds the React app and serves it with Nginx.
 
-# TODO:
-- CardGrids have much copy-paste
+```bash
+docker build -t tlight-ui .
+docker run -p 8080:8080 tlight-ui
+```
+Access the containerized app at `http://localhost:8080`.
+
+## CI/CD Pipeline
+
+The project uses GitHub Actions for continuous integration and deployment.
+*   **On Push/PR**: Runs unit tests, linting, and E2E tests.
+*   **Coverage**: Automatically updates the coverage badge in this README.
+*   **Deployment**: Builds and pushes the Docker image to GitHub Container Registry (GHCR) on successful master branch builds.
+
+## Project Structure
+
+*   `src/components`: UI components (cards, inputs, layout).
+*   `src/slices`: Redux state slices (nodes, effects).
+*   `src/actions`: Redux async actions.
+*   `e2e`: Playwright test specifications.
+*   `vite.config.js`: Vite configuration options.
+
+## TODO / Known Issues
+
+*   Refactor `CardGrids` to reduce code duplication.
