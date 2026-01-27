@@ -8,6 +8,9 @@ export const COMMON_PROPERTIES = [
         name: "lightCount",
         description: "Number of lights/channels this effect should create",
         type: "int",
+        min: 1,
+        max: 100,
+        default: 1,
         required: true
     },
     {
@@ -31,6 +34,9 @@ export const EFFECT_PROPERTIES = {
                     name: "startChannel",
                     description: "sACN channel to from witch onwards to start listening",
                     type: "int",
+                    min: 1,
+                    max: 512,
+                    default: 1,
                     required: true
                 }
             ]
@@ -49,6 +55,9 @@ export const EFFECT_PROPERTIES = {
                     name: "startChannel",
                     description: "From what channel/light id onwards to send color data. To be used with DMX lights.",
                     type: "int",
+                    min: 1,
+                    max: 512,
+                    default: 1,
                     required: false
                 },
                 {
@@ -63,12 +72,14 @@ export const EFFECT_PROPERTIES = {
                             type: "int",
                             min: 1,
                             max: 255,
+                            default: 5,
                             required: true
                         },
                         {
                             name: "startColor",
                             description: "Start color of the effect. Give this when colors are supported.",
                             type: "object",
+                            specificType: "color",
                             required: false,
                             properties: [
                                 {
@@ -101,6 +112,7 @@ export const EFFECT_PROPERTIES = {
                             name: "endColor",
                             description: "End color of the effect. Give this when colors are supported.",
                             type: "object",
+                            specificType: "color",
                             required: false,
                             properties: [
                                 {

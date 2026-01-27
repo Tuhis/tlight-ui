@@ -27,6 +27,9 @@ const ColorWrapper = ({ r, g, b, onChange }) => {
                 backgroundColor: 'transparent',
                 padding: '10px 0 0 0',
             },
+            active: {
+                display: 'none'
+            },
             controls: {
                 display: 'none'
             },
@@ -48,6 +51,8 @@ const ColorWrapper = ({ r, g, b, onChange }) => {
             },
             svg: {
                 fill: '#fff !important',
+            },
+            hue: {
             }
         }
     };

@@ -1,8 +1,10 @@
 .basecard {
     display: block;
     box-sizing: border-box;
-    background-color: #215463;
+    background-color: rgba(13, 42, 53, 0.9);
     padding: 12px;
+    border: 1px solid #00F0FF;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
 
     color: white;
     font-size: 16pt;
@@ -30,7 +32,8 @@
 
 h2,
 .title-input {
-    color: white;
+    color: #00F0FF;
+    text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
     font-size: 24pt;
     margin-top: 6px;
     margin-bottom: 6px;

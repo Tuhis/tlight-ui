@@ -9,11 +9,13 @@
     appearance: none;
     width: 100%;
     margin: 0;
-    height: 3px;
-    border-radius: 1.5px;
+    height: 6px;
+    background: #1A4D5E;
+    border-radius: 3px;
     outline: none;
     opacity: 1.0;
     transition: opacity 0.2s;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .slider:hover {
@@ -26,19 +28,30 @@
 
 /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
 .slider::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Override default look */
+    -webkit-appearance: none;
+    /* Override default look */
     appearance: none;
-    width: 20px; /* Set a specific slider handle width */
-    height: 20px; /* Slider handle height */
+    width: 20px;
+    /* Set a specific slider handle width */
+    height: 20px;
+    /* Slider handle height */
     border-radius: 50%;
-    background: white; /* Green background */
-    cursor: pointer; /* Cursor on hover */
+    background: white;
+    cursor: pointer;
+    /* Cursor on hover */
+    box-shadow: 0 0 10px #00F0FF;
+    border: 1px solid #00F0FF;
 }
 
 .slider::-moz-range-thumb {
-    width: 20px; /* Set a specific slider handle width */
-    height: 20px; /* Slider handle height */
+    width: 20px;
+    /* Set a specific slider handle width */
+    height: 20px;
+    /* Slider handle height */
     border-radius: 50%;
-    background: white; /* Green background */
-    cursor: pointer; /* Cursor on hover */
+    background: white;
+    cursor: pointer;
+    /* Cursor on hover */
+    box-shadow: 0 0 10px #00F0FF;
+    border: 1px solid #00F0FF;
 }

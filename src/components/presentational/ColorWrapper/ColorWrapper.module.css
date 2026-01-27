@@ -20,3 +20,8 @@
     display: block !important;
     border-radius: 2px;
 }
+
+/* Hide the Hue Slider handle/pointer */
+.minimal-color-picker :global(.hue-horizontal)>div {
+    display: none !important;
+}
