@@ -10,14 +10,37 @@
 
 .icon {
     font-size: 342pt;
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
                                 supported by Chrome and Opera */
+    transition: all 0.3s ease;
 }
 
 .text {
+    transition: all 0.3s ease;
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+    border-color: #00F0FF;
+}
+
+.card-hover:hover .icon,
+.card-hover:hover .text {
+    color: #00F0FF;
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.8);
 }

@@ -16,7 +16,8 @@ const AddNewCard = ({
             showTitle={false}
             minHeight={minHeight}
             autoHeight={autoHeight}
-            autoWidth={autoWidth} >
+            autoWidth={autoWidth}
+            className={styles["card-hover"]} >
 
             <div
                 onClick={onClick}

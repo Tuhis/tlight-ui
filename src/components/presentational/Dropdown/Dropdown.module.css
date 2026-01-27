@@ -13,6 +13,7 @@
     font-family: Consolas, monaco, monospace;
     font-size: 12pt;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .header {
@@ -93,4 +94,5 @@ li:hover {
 .dropdown:hover {
     box-shadow: 0 0 5px rgba(0, 240, 255, 0.4);
     border-color: #5ff5ff;
+    background-color: #123542;
 }

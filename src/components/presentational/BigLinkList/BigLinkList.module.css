@@ -11,6 +11,7 @@
     margin-bottom: 6px;
     margin-left: 4px;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 @media screen and (max-width: 655px) {
@@ -22,6 +23,6 @@
 }
 
 .link-text:hover {
-    color: black;
-    font-weight: 400;
+    color: #00F0FF;
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
 }

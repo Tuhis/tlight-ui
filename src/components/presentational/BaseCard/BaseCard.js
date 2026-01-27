@@ -14,6 +14,7 @@ const BaseCard = ({
     showTitle = true,
     editableTitle = false,
     onTitleChange = _.noop,
+    className = "",
     children
 }) => {
     return (
@@ -21,7 +22,8 @@ const BaseCard = ({
             styles.basecard +
             " base-card " +
             (autoHeight ? styles["auto-height"] : styles["fixed-height"]) + " " +
-            (autoWidth ? styles["auto-width"] : styles["fixed-width"])}
+            (autoWidth ? styles["auto-width"] : styles["fixed-width"]) + " " +
+            className}
             style={{ minHeight: minHeight }} >
 
             {showTitle &&
@@ -52,6 +54,7 @@ BaseCard.propTypes = {
     showTitle: PropTypes.bool,
     editableTitle: PropTypes.bool,
     onTitleChange: PropTypes.func,
+    className: PropTypes.string,
     children: PropTypes.node
 };
 
